@@ -12,7 +12,6 @@ import { SignUp } from "./pages/SignUp";
 import { GoogleApi } from "./pages/GoogleApi";
 import { Search } from "./pages/Search";
 import { Custom } from "./pages/Custom";
-import { MainPage } from "./pages/mainpage";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { Favorites } from "./pages/Favorites";
 import { Logout } from "./pages/Logout"

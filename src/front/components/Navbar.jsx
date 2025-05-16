@@ -16,7 +16,7 @@ export const Navbar = () => {
 
   return (
     <nav
-      className="py-3"
+      className="py-4"
       style={{
         background: "linear-gradient(to right, #1a0033, #330033)",
         color: "#ccc",
@@ -26,18 +26,38 @@ export const Navbar = () => {
       }}
     >
       <div className="container-fluid d-flex align-items-center justify-content-between">
-        {/* Logo */}
+        {/* Marquee */}
         {location.pathname === "/" ? (
-          <span
-            style={{
-              fontSize: "1.5rem",
-              color: "#FF00FF",
-              fontFamily: "'Orbitron', sans-serif",
-              textShadow: "0 0 8px #FF00FF",
-            }}
-          >
-            Sip & Search
-          </span>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                width: "250px",
+                marginTop: "3px",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-block",
+                  paddingLeft: "100%",
+                  animation: "marquee 12s linear infinite",
+                  color: "#FF00FF",
+                  fontWeight: "bold",
+                  fontSize: "0.95rem",
+                  letterSpacing: "1px",
+                  fontFamily: "'Orbitron', sans-serif",
+                  textShadow: `
+                    0 0 2px #FF00FF,
+                    0 0 6px #FF00FF,
+                    0 0 12px #FF00FF
+                  `,
+                }}
+              >
+                Find your perfect cocktail ... or the best place to enjoy it!
+              </div>
+            </div>
+          </div>
         ) : (
           <Link to="/" className="d-flex align-items-center text-decoration-none">
             <img
@@ -61,9 +81,8 @@ export const Navbar = () => {
           </Link>
         )}
 
-        {/* Controls */}
+        {/* Botones */}
         <div className="d-flex align-items-center">
-          {/* Back */}
           {location.pathname !== "/" && (
             <button
               onClick={() => navigate(-1)}
@@ -85,7 +104,6 @@ export const Navbar = () => {
             </button>
           )}
 
-          {/* Sign In */}
           {!store.token && location.pathname !== "/signin" && (
             <Link
               to="/signin"
@@ -98,8 +116,8 @@ export const Navbar = () => {
                 transition: "all 0.3s ease-in-out",
               }}
               onMouseEnter={(e) =>
-                (e.target.style.boxShadow =
-                  "0 0 12px #FF00FF, 0 0 24px #FF00FF, 0 0 36px #FF00FF")
+              (e.target.style.boxShadow =
+                "0 0 12px #FF00FF, 0 0 24px #FF00FF, 0 0 36px #FF00FF")
               }
               onMouseLeave={(e) =>
                 (e.target.style.boxShadow = "0 0 8px #FF00FF")
@@ -109,7 +127,6 @@ export const Navbar = () => {
             </Link>
           )}
 
-          {/* Sign Up */}
           {!store.token && location.pathname !== "/signup" && (
             <Link
               to="/signup"
@@ -122,8 +139,8 @@ export const Navbar = () => {
                 transition: "all 0.3s ease-in-out",
               }}
               onMouseEnter={(e) =>
-                (e.target.style.boxShadow =
-                  "0 0 12px #00AFFF, 0 0 24px #00AFFF, 0 0 36px #00AFFF")
+              (e.target.style.boxShadow =
+                "0 0 12px #00AFFF, 0 0 24px #00AFFF, 0 0 36px #00AFFF")
               }
               onMouseLeave={(e) =>
                 (e.target.style.boxShadow = "0 0 8px #00AFFF")
@@ -133,7 +150,31 @@ export const Navbar = () => {
             </Link>
           )}
 
-          {/* Logout */}
+          {/* My Profile */}
+          {store.token && location.pathname !== "/profile" && (
+            <Link
+              to="/profile"
+              className="btn me-2"
+              style={{
+                background: "#00AFFF",
+                borderColor: "#00AFFF",
+                color: "#fff",
+                boxShadow: "0 0 8px #00AFFF",
+                fontWeight: "bold",
+                transition: "all 0.3s ease-in-out",
+              }}
+              onMouseEnter={(e) =>
+                (e.target.style.boxShadow = "0 0 12px #00AFFF, 0 0 24px #00AFFF")
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.boxShadow = "0 0 8px #00AFFF")
+              }
+            >
+              <i className="bi bi-person-circle me-2"></i> Profile
+            </Link>
+          )}
+
+
           {store.token && (
             <button
               onClick={handleLogout}
