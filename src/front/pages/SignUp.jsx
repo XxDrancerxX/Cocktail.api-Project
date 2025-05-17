@@ -62,7 +62,7 @@ export const SignUp = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="p-4"
+        className="neon-form p-4"
         style={{
           backgroundColor: "#1a1a1a",
           borderRadius: "16px",

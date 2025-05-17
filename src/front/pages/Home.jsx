@@ -41,10 +41,17 @@ export const Home = () => (
         <h1 className="display-4 fw-bold mb-3" style={{ color: "#333" }}>
           Welcome to Sip &amp; Search
         </h1>
-        <p className="lead text-secondary mb-4">
-          The best place to discover your next favorite cocktail—and find the
-          nearest spot to enjoy it.
-        </p>
+        <p
+  className="mb-4"
+  style={{
+    color: "#555",
+    fontSize: "1.1rem",
+    fontFamily: "'Orbitron', sans-serif"
+  }}
+>
+  The best place to discover your next favorite cocktail and find the nearest spot to enjoy it.
+</p>
+
       </div>
     </section>
 

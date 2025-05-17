@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 
 export const SignIn = () => {
   const { dispatch } = useGlobalReducer();
@@ -14,6 +12,14 @@ export const SignIn = () => {
   });
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const sessionExpired = localStorage.getItem("session_expired");
+    if (sessionExpired) {
+      setError("Your session has expired. Please sign in again.");
+      localStorage.removeItem("session_expired");
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,6 +47,8 @@ export const SignIn = () => {
 
       if (response.ok && data.token) {
         localStorage.setItem("token", data.token);
+        const expirationTime = Date.now() + 12 * 60 * 60 * 1000;
+        localStorage.setItem("token_expiration", expirationTime);
         dispatch({ type: "SET_TOKEN", payload: data.token });
         dispatch({ type: "SET_USER", payload: data.user });
         navigate("/profile");
@@ -56,7 +64,7 @@ export const SignIn = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="d-flex flex-column align-items-center justify-content-center w-100"
+      className="neon-form d-flex flex-column align-items-center justify-content-center w-100"
       style={{
         minHeight: "100vh",
         background: "linear-gradient(to right, #fce4ec, #e3f2fd)",
@@ -137,8 +145,8 @@ export const SignIn = () => {
             borderRadius: "8px"
           }}
           onMouseEnter={(e) =>
-          (e.target.style.boxShadow =
-            "0 0 16px #FF00FF, 0 0 32px #FF00FF, 0 0 48px #FF00FF")
+            (e.target.style.boxShadow =
+              "0 0 16px #FF00FF, 0 0 32px #FF00FF, 0 0 48px #FF00FF")
           }
           onMouseLeave={(e) =>
             (e.target.style.boxShadow = "0 0 12px #FF00FF, 0 0 24px #FF00FF")
@@ -158,7 +166,6 @@ export const SignIn = () => {
           >
             Forgot Password?
           </Link>
-
         </div>
       </div>
     </form>

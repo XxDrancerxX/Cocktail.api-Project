@@ -14,9 +14,9 @@ export const Password = () => {
         padding: "30px",
       }}
     >
-      {/* Form box */}
+      {/* Form box with neon-form class */}
       <div
-        className="p-4"
+        className="neon-form p-4"
         style={{
           backgroundColor: "#1a1a1a",
           borderRadius: "16px",
@@ -36,6 +36,7 @@ export const Password = () => {
           Password Recovery
         </h4>
 
+        {/* Inputs */}
         {[
           { type: "text", placeholder: "User Name" },
           { type: "email", placeholder: "Email" },

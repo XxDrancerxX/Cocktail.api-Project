@@ -1,8 +1,18 @@
 import React, { useReducer, createContext } from "react";
 
 export const initialStore = () => {
+  const token = localStorage.getItem("token");
+  const expiration = localStorage.getItem("token_expiration");
+
+  const isExpired = expiration && Date.now() > parseInt(expiration, 10);
+
+  if (isExpired) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("token_expiration");
+  }
+
   return {
-    token: localStorage.getItem("token") || null,
+    token: isExpired ? null : token,
     user: null,
     message: null,
     todos: [

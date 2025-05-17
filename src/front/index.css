@@ -7,9 +7,9 @@
   }
 }
 
-input::placeholder {
+.neon-form input::placeholder {
   color: rgb(183, 161, 194) !important;
-  opacity: 1; /* asegúrate de que no esté desvanecido */
+  opacity: 1;
 }
 
 
