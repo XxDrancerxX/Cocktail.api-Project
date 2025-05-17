@@ -81,7 +81,7 @@ export const Navbar = () => {
           </Link>
         )}
 
-        {/* Botones */}
+        {/* Buttons */}
         <div className="d-flex align-items-center">
           {location.pathname !== "/" && (
             <button
