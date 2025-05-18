@@ -4,14 +4,14 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import requests
 import os
 from flask import Flask, request, jsonify, url_for, Blueprint,current_app
-from api.models import db, User
+from api.models import db, User, Favorite, FavoritePlaces
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 # ==>> loads the environment variables from the .env file, pip install python-dotenv
 from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
 # ==>> this is used to create a JWT token for the user, pip install flask-jwt-extended
-from flask_jwt_extended import create_access_token, decode_token
+from flask_jwt_extended import create_access_token, decode_token,jwt_required, get_jwt_identity
 from datetime import timedelta
 
 
@@ -341,7 +341,7 @@ def sign_in_user():
     if not check_password_hash(user.password, password):
         return jsonify({"error": "Invalid password"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
 
     return jsonify({
         "token": access_token,
@@ -438,8 +438,51 @@ def request_password_reset():
 
     return jsonify(generic_msg), 200
 
+@api.route("/favorite-places", methods=["GET"])
+@jwt_required()
+def get_favorite_places():
+    user_id = get_jwt_identity()
+    favorite_places = FavoritePlaces.query.filter_by(user_id=user_id).all()
+    return jsonify([fav.serialize() for fav in favorite_places]), 200
+
+@api.route("/favorite-places", methods=["POST"])
+@jwt_required()
+def add_favorite_place():
+    user_id = get_jwt_identity()
+    data = request.json
+    if not all(key in data for key in ["placeId", "placeName", "placeImage"]):
+        return jsonify({"message": "Missing required fields"}), 400
+
+    try:
+        favorite_place = FavoritePlaces(user_id=user_id, place_id=data["placeId"], place_name=data["placeName"], place_image=data["placeImage"])
+        db.session.add(favorite_place )
+        db.session.commit()
+        return jsonify({"message": "Favorite place added"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Error adding favorite", "error": str(e)}), 500
+    
+@api.route("/favorite-places/<place_id>", methods=["DELETE"])
+@jwt_required()
+def delete_favorite_place(place_id):
+    user_id = get_jwt_identity()
+    favorite_place = FavoritePlaces.query.filter_by(user_id=user_id, place_id=place_id).first()
+    if favorite_place:
+        try:
+            db.session.delete(favorite_place)
+            db.session.commit()
+            return jsonify({"message": "Favorite removed"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"message": "Error deleting favorite", "error": str(e)}), 500
+    return jsonify({"message": "Favorite not found"}), 404    
 
 @api.route("/users", methods=["GET"])
 def get_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
+
+
+
+
+

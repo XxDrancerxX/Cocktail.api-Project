@@ -53,15 +53,14 @@ export const FindSpots = () => {
     try {
       const res = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idDrink}`)
       if (!res.ok) {
-       throw new Error(`Lookup failed: ${res.status} ${res.statusText}`);
+        throw new Error(`Lookup failed: ${res.status} ${res.statusText}`);
       }
       const data = await res.json()
       return data.drinks[0]
 
     }
     catch (err) {
-      console.log(`Error in catch: ${err.message}`);
-      setError(`Server error: ${err.message}`);
+      console.log(`Error in catch: ${err.message}`);      
       return null
     }
   }
@@ -169,7 +168,7 @@ export const FindSpots = () => {
         ))}
       </div>
       {/* show any error messages here */}
-      {error && (
+      {!loading && error && drinks.length === 0 && (
         <div className="alert alert-danger text-center" role="alert">
           {error}
         </div>
@@ -179,11 +178,14 @@ export const FindSpots = () => {
         <p>No drinks found in {selectedCategory}.</p>
       )}
       {!loading && drinks.length > 0 && (
-        <div id="container-find-spot" className="container ">
+        <div id="container-find-spot" className="container">
           <div className="row gx-3 gy-4">
             {
               drinks.map(d => (
-                <div key={d.idDrink} className="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div
+                  key={d.idDrink}
+                  className="col-6 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch"
+                >
                   <div className="card cocktail-find-spot">
                     <img src={d.strDrinkThumb} className="card-img-top" alt={d.strDrink} />
                     <div className="card-body">

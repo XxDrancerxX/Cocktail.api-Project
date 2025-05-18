@@ -9,6 +9,7 @@ export const Footer = () => (
       borderTop: "1px solid rgba(255,255,255,0.2)",
       fontFamily: "'Orbitron', sans-serif",
       boxShadow: "0 -2px 10px rgba(255, 0, 204, 0.3)",
+      marginTop: "25px"
     }}
   >
 <p>
