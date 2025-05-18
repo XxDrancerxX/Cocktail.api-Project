@@ -62,11 +62,11 @@ export const SignUp = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="p-4"
+        className="neon-form p-4"
         style={{
           backgroundColor: "#1a1a1a",
           borderRadius: "16px",
-          boxShadow: "0 0 25px rgba(255, 20, 147, 0.2)",
+          boxShadow: "0 0 25px rgba(255, 0, 255, 0.3)",
           width: "100%",
           maxWidth: "400px"
         }}
@@ -75,84 +75,36 @@ export const SignUp = () => {
           className="text-center mb-4"
           style={{
             color: "#fff",
-            textShadow: "0 0 6px #FF1493, 0 0 12px #FF1493",
+            textShadow: "0 0 6px #FF00FF, 0 0 12px #FF00FF",
             fontWeight: "bold"
           }}
         >
           Sign Up
         </h4>
 
-        <div className="mb-3">
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Name"
-            className="form-control"
-            style={{
-              background: "#000",
-              border: "2px solid #CCCCCC",
-              color: "#FF1493",
-              boxShadow: "0 0 6px #CCCCCC",
-              borderRadius: "8px"
-            }}
-          />
-        </div>
-
-        <div className="mb-3">
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-            className="form-control"
-            style={{
-              background: "#000",
-              border: "2px solid #CCCCCC",
-              color: "#FF1493",
-              boxShadow: "0 0 6px #CCCCCC",
-              borderRadius: "8px"
-            }}
-          />
-        </div>
-
-        <div className="mb-3">
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="form-control"
-            style={{
-              background: "#000",
-              border: "2px solid #CCCCCC",
-              color: "#FF1493",
-              boxShadow: "0 0 6px #CCCCCC",
-              borderRadius: "8px"
-            }}
-          />
-        </div>
-
-        <div className="mb-3">
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Phone Number"
-            className="form-control"
-            style={{
-              background: "#000",
-              border: "2px solid #CCCCCC",
-              color: "#FF1493",
-              boxShadow: "0 0 6px #CCCCCC",
-              borderRadius: "8px"
-            }}
-          />
-        </div>
+        {["name", "email", "password", "phone"].map((field, i) => (
+          <div className="mb-3" key={i}>
+            <input
+              type={field === "password" ? "password" : field === "email" ? "email" : field === "phone" ? "tel" : "text"}
+              name={field}
+              value={formData[field]}
+              onChange={handleChange}
+              placeholder={
+                field === "phone"
+                  ? "Phone Number"
+                  : field.charAt(0).toUpperCase() + field.slice(1)
+              }
+              className="form-control"
+              style={{
+                background: "#000",
+                border: "2px solid #FF00FF",
+                color: "#FF00FF",
+                boxShadow: "0 0 6px #FF00FF",
+                borderRadius: "8px"
+              }}
+            />
+          </div>
+        ))}
 
         <button
           type="submit"

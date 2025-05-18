@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import ImageCarousel from "../components/ImageCarousel";
 import logo from "../assets/img/logoRound.png";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 export const Home = () => (
   <div
@@ -19,10 +20,10 @@ export const Home = () => (
             height: "250px",
             borderRadius: "100%",
             overflow: "hidden",
-            boxShadow: "0 0 10px #FF1493, 0 0 20px #FF1493, 0 0 60px #FF1493",
-            backgroundColor: "#FF1493",
+            boxShadow: "0 0 10px #FF00FF, 0 0 20px #FF00FF, 0 0 60px #FF00FF",
+            backgroundColor: "#FF00FF",
             margin: "0 auto",
-			      marginBottom: "30px",
+            marginBottom: "30px",
           }}
         >
           <img
@@ -31,9 +32,8 @@ export const Home = () => (
             style={{
               width: "100%",
               height: "100%",
-              objectFit:"cover",
+              objectFit: "cover",
               transform: "scale(1.02)",
-             
             }}
           />
         </div>
@@ -41,10 +41,17 @@ export const Home = () => (
         <h1 className="display-4 fw-bold mb-3" style={{ color: "#333" }}>
           Welcome to Sip &amp; Search
         </h1>
-        <p className="lead text-secondary mb-4">
-          The best place to discover your next favorite cocktail—and find the
-          nearest spot to enjoy it.
-        </p>
+        <p
+  className="mb-4"
+  style={{
+    color: "#555",
+    fontSize: "1.1rem",
+    fontFamily: "'Orbitron', sans-serif"
+  }}
+>
+  The best place to discover your next favorite cocktail and find the nearest spot to enjoy it.
+</p>
+
       </div>
     </section>
 
@@ -66,8 +73,8 @@ export const Home = () => (
             <div
               className="p-4 rounded shadow-sm text-center d-flex flex-column justify-content-between flex-fill"
               style={{
-                background: "rgba(255,20,147,0.05)",
-                border: "1px solid rgba(255,20,147,0.2)",
+                background: "rgba(255,0,255,0.05)",
+                border: "1px solid rgba(255,0,255,0.2)",
               }}
             >
               <h4 className="mb-2">Quick Cocktail Search</h4>
@@ -78,8 +85,8 @@ export const Home = () => (
                 to="/search"
                 className="btn"
                 style={{
-                  background: "#FF1493",
-                  borderColor: "#FF1493",
+                  background: "#FF00FF",
+                  borderColor: "#FF00FF",
                   color: "#fff",
                 }}
               >
@@ -105,8 +112,8 @@ export const Home = () => (
                 to="/custom"
                 className="btn"
                 style={{
-                  background: "#FF1493",
-                  borderColor: "#FF1493",
+                  background: "#FF00FF",
+                  borderColor: "#FF00FF",
                   color: "#fff",
                 }}
               >
@@ -124,7 +131,7 @@ export const Home = () => (
                 border: "1px solid rgba(0,200,100,0.2)",
               }}
             >
-              <h4 className="mb-2">Find Places to drink</h4>
+              <h4 className="mb-2">Find Places to Drink</h4>
               <p className="text-muted mb-3">
                 Explore and find any spot in the world to enjoy any cocktail or drink from our data.
               </p>
@@ -132,8 +139,8 @@ export const Home = () => (
                 to="/find-spots"
                 className="btn"
                 style={{
-                  background: "#FF1493",
-                  borderColor: "#FF1493",
+                  background: "#FF00FF",
+                  borderColor: "#FF00FF",
                   color: "#fff",
                 }}
               >
@@ -168,29 +175,29 @@ export const Home = () => (
             {
               icon: "bi bi-search",
               title: "Quick Search",
-              text: "Type any drink name to see recipes, glassware & ingredients."
+              text: "Type any drink name to see recipes, glassware & ingredients.",
             },
             {
               icon: "bi bi-list-check",
               title: "Customize Ingredients",
-              text: "Select what’s in your pantry and get tailored cocktail matches."
+              text: "Select what’s in your pantry and get tailored cocktail matches.",
             },
             {
               icon: "bi bi-globe",
               title: "Browse Catalog",
-              text: "Explore our full collection to discover new favorites."
+              text: "Explore our full collection to discover new favorites.",
             },
             {
               icon: "bi bi-geo-alt",
               title: "Find Nearby Spots",
-              text: "Locate bars & lounges serving your chosen drink."
-            }
+              text: "Locate bars & lounges serving your chosen drink.",
+            },
           ].map((item, i) => (
             <div key={i} className="col-12 col-md-6 col-lg-3">
               <div className="h-100 p-4 text-center border rounded shadow-sm">
                 <i
                   className={`${item.icon} fs-1 mb-3`}
-                  style={{ color: "#FF1493" }}
+                  style={{ color: "#FF00FF" }}
                 />
                 <h5 className="fw-bold">{item.title}</h5>
                 <p className="text-muted small">{item.text}</p>
