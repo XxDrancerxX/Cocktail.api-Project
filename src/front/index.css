@@ -1,8 +1,23 @@
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.neon-form input::placeholder {
+  color: rgb(183, 161, 194) !important;
+  opacity: 1;
+
 /* Button & Results Container */
 .button-results-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+
 }
 
 /* Create Cocktail Button with Glow Effect */

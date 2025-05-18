@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const SignIn = () => {
   const { dispatch } = useGlobalReducer();
@@ -12,6 +12,14 @@ export const SignIn = () => {
   });
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const sessionExpired = localStorage.getItem("session_expired");
+    if (sessionExpired) {
+      setError("Your session has expired. Please sign in again.");
+      localStorage.removeItem("session_expired");
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,8 +47,10 @@ export const SignIn = () => {
 
       if (response.ok && data.token) {
         localStorage.setItem("token", data.token);
+        const expirationTime = Date.now() + 12 * 60 * 60 * 1000;
+        localStorage.setItem("token_expiration", expirationTime);
         dispatch({ type: "SET_TOKEN", payload: data.token });
-        dispatch({ type: "SET_USER", payload: data.user }); // 👈 Aquí se guarda el nombre y email
+        dispatch({ type: "SET_USER", payload: data.user });
         navigate("/profile");
       } else {
         setError("Invalid email or password.");
@@ -54,7 +64,7 @@ export const SignIn = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="d-flex flex-column align-items-center justify-content-center w-100"
+      className="neon-form d-flex flex-column align-items-center justify-content-center w-100"
       style={{
         minHeight: "100vh",
         background: "linear-gradient(to right, #fce4ec, #e3f2fd)",
@@ -68,14 +78,14 @@ export const SignIn = () => {
           width: "100%",
           maxWidth: "400px",
           borderRadius: "12px",
-          boxShadow: "0 0 25px rgba(255, 20, 147, 0.2)"
+          boxShadow: "0 0 25px rgba(255, 0, 255, 0.3)"
         }}
       >
         <h4
           className="text-center mb-4"
           style={{
             color: "#fff",
-            textShadow: "0 0 6px #FF1493, 0 0 12px #FF1493",
+            textShadow: "0 0 8px #FF00FF, 0 0 16px #FF00FF",
             fontWeight: "bold"
           }}
         >
@@ -96,9 +106,9 @@ export const SignIn = () => {
             className="form-control"
             style={{
               background: "#000",
-              color: "#FF1493",
-              border: "2px solid #CCCCCC",
-              boxShadow: "0 0 6px #CCCCCC",
+              color: "#FF00FF",
+              border: "2px solid #FF00FF",
+              boxShadow: "0 0 6px #FF00FF",
               borderRadius: "8px"
             }}
           />
@@ -114,9 +124,9 @@ export const SignIn = () => {
             className="form-control"
             style={{
               background: "#000",
-              color: "#FF1493",
-              border: "2px solid #CCCCCC",
-              boxShadow: "0 0 6px #CCCCCC",
+              color: "#FF00FF",
+              border: "2px solid #FF00FF",
+              boxShadow: "0 0 6px #FF00FF",
               borderRadius: "8px"
             }}
           />
@@ -126,28 +136,28 @@ export const SignIn = () => {
           type="submit"
           className="btn w-100"
           style={{
-            background: "#FF1493",
+            background: "#FF00FF",
             color: "#fff",
             border: "none",
             fontWeight: "bold",
-            boxShadow: "0 0 12px #FF1493, 0 0 24px #FF1493",
+            boxShadow: "0 0 12px #FF00FF, 0 0 24px #FF00FF",
             transition: "all 0.3s ease-in-out",
             borderRadius: "8px"
           }}
           onMouseEnter={(e) =>
             (e.target.style.boxShadow =
-              "0 0 16px #ff1493, 0 0 32px #ff1493, 0 0 48px #ff1493")
+              "0 0 16px #FF00FF, 0 0 32px #FF00FF, 0 0 48px #FF00FF")
           }
           onMouseLeave={(e) =>
-            (e.target.style.boxShadow = "0 0 12px #ff1493, 0 0 24px #ff1493")
+            (e.target.style.boxShadow = "0 0 12px #FF00FF, 0 0 24px #FF00FF")
           }
         >
           Sign In
         </button>
 
         <div className="text-center mt-3">
-          <a
-            href="/password"
+          <Link
+            to="/password"
             className="btn btn-link"
             style={{
               color: "#00eaff",
@@ -155,7 +165,7 @@ export const SignIn = () => {
             }}
           >
             Forgot Password?
-          </a>
+          </Link>
         </div>
       </div>
     </form>
