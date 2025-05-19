@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logoNavbar from "../assets/img/icono.png";
 import useGlobalReducer from "../hooks/useGlobalReducer";
@@ -10,9 +10,40 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("token_expiration");
     dispatch({ type: "SET_TOKEN", payload: null });
+    dispatch({ type: "SET_USER",  payload: null });
     navigate("/signin");
   };
+  // ① Whenever we have a token but no user, call GET /api/user to fetch the user data
+  // The token is stored in localStorage and is used to authenticate the request
+  useEffect(() => {
+    if (store.token && !store.user) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${store.token}`  // Include the token in the Authorization header
+        }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Not authenticated");
+          return res.json();
+        })
+        .then(userObj => {
+          dispatch({ type: "SET_USER", payload: userObj });
+        })
+        .catch(() => {
+          // if the token is bad/expired, clear it
+          localStorage.removeItem("token");
+          dispatch({ type: "SET_TOKEN", payload: null });
+          dispatch({ type: "SET_USER", payload: null });
+          localStorage.setItem("session_expired", "1");
+          navigate("/signin");
+        });
+    }
+  }, [store.token, store.user, dispatch, navigate]);
+
 
   return (
     <nav
@@ -103,6 +134,17 @@ export const Navbar = () => {
               <i className="bi bi-arrow-left-circle-fill"></i>
             </button>
           )}
+          {store.user && (
+            <span
+              style={{
+                marginRight: "1rem",
+                color: "#fff",
+                textShadow: "0 0 6px #FF00FF"
+              }}
+            >
+              Welcome, {store.user.name}
+            </span>
+          )}
 
           {!store.token && location.pathname !== "/signin" && (
             <Link
@@ -150,10 +192,10 @@ export const Navbar = () => {
             </Link>
           )}
 
-          {/* My Profile */}
-          {store.token && location.pathname !== "/profile" && (
+          {/* My MainPage */}
+          {store.token && location.pathname !== "/MainPage" && (
             <Link
-              to="/profile"
+              to="/MainPage"
               className="btn me-2"
               style={{
                 background: "#00AFFF",

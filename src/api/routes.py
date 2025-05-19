@@ -7,8 +7,6 @@ from flask import Flask, request, jsonify, url_for, Blueprint,current_app
 from api.models import db, User, Favorite, FavoritePlaces
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-# ==>> loads the environment variables from the .env file, pip install python-dotenv
-from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
 # ==>> this is used to create a JWT token for the user, pip install flask-jwt-extended
 from flask_jwt_extended import create_access_token, decode_token,jwt_required, get_jwt_identity
@@ -17,7 +15,7 @@ from datetime import timedelta
 
 
 
-load_dotenv()    # reads .env and sets those variables into your environment
+
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 if not FRONTEND_URL:
     raise RuntimeError("Missing required env var: FRONTEND_URL")
@@ -31,7 +29,8 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 # ==>> you can talk to your flask endpoins whithout the browser blocking the request.
-CORS(api)
+# CORS(api) ==>>  You don’t need to call CORS on the blueprint; it inherits it from the app.Because we did app.register_blueprint(api, url_prefix="/api") on app.py
+
 
 
 # ==>> this is the endpoint that will be called from the front end
@@ -481,6 +480,15 @@ def delete_favorite_place(place_id):
 def get_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
+
+@api.route('/user', methods=['GET'])  ## ==>> this is the endpoint that will be called from the front end to show the user profile.
+@jwt_required()
+def get_logged_in_user(): 
+    user = User.query.get(get_jwt_identity())
+    if not user:
+        return jsonify({"error": "User not found"}), 404  ## ==>> check if the user is present in the database
+    return jsonify(user.serialize()), 200
+
 
 
 

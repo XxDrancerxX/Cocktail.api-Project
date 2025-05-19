@@ -4,16 +4,17 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-app = Flask(__name__)
-CORS(app)
-jwt = JWTManager(app)
+# app = Flask(__name__)
+# CORS(app)
+# jwt = JWTManager(app)
 
 # **Database Configuration**
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_SECRET_KEY"] = "supersecretkey"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  
+# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+# app.config["JWT_SECRET_KEY"] = "supersecretkey"
 
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 
 # **User Model**
@@ -52,8 +53,8 @@ class Favorite(db.Model):
         }
 
 # **Create Database Tables**
-with app.app_context():
-    db.create_all()
+# with app.app_context():
+#     db.create_all()
 
 class FavoritePlaces(db.Model):
     __tablename__ = "favorite_places"
@@ -195,6 +196,6 @@ class FavoritePlaces(db.Model):
 #             return jsonify({"message": "Error deleting favorite", "error": str(e)}), 500
 #     return jsonify({"message": "Favorite not found"}), 404    
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)
 
