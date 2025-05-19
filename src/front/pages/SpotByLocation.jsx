@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 //import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export const SpotByLocation = () => {
@@ -12,8 +13,10 @@ export const SpotByLocation = () => {
     const [showPhotos, setShowPhotos] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [modalReviewText, setModalReviewText] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);     
+    const [favoritePlaces, setFavoritePlaces] = useState([]);
     const { cocktail } = useParams();
+    const { store } = useGlobalReducer();
 
 
 

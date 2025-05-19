@@ -43,6 +43,8 @@ class Favorite(db.Model):
     drink_id = db.Column(db.String(50), nullable=False)
     drink_name = db.Column(db.String(120), nullable=False)
     drink_image = db.Column(db.String(255), nullable=False)
+    drink_glass = db.Column(db.String(120), nullable=True)
+    drink_category = db.Column(db.String(120), nullable=True)
 
     def serialize(self):
         return {
@@ -50,6 +52,8 @@ class Favorite(db.Model):
             "drink_id": self.drink_id,
             "drink_name": self.drink_name,
             "drink_image": self.drink_image,
+            "drink_glass": self.drink_glass,
+            "drink_category": self.drink_category            
         }
 
 # **Create Database Tables**

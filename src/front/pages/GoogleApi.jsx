@@ -1,4 +1,4 @@
-import { Link,useParams } from "react-router-dom";
+import { Link, useParams,useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useEffect, useState } from "react";
 //import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -12,8 +12,11 @@ export const GoogleApi = () => {
   const [showPhotos, setShowPhotos] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [modalReviewText, setModalReviewText] = useState("");
+  const [favoritePlaces, setFavoritePlaces] = useState([]);
   const { cocktail } = useParams();
-  
+  const { store } = useGlobalReducer();
+  const navigate = useNavigate();
+
 
 
   const handleSearch = () => { // Function to handle the search button click 
@@ -104,11 +107,87 @@ export const GoogleApi = () => {
     setShowPhotos(!showPhotos); // Toggle the showPhotos state to show or hide photos
   }
 
+  const toggleFavoritePlace = async (place) => {
+    if (!store?.token) {
+      alert("Please log in to add favorite places");
+      navigate("/signin");
+    }
+
+    const isFavorite = favoritePlaces.some(f => f.placeId === place.place_id);
+
+    try {
+      if (isFavorite) {
+        // DELETE request
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/favorite-places/${place.place_id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${store.token}`
+            }
+          }
+        );
+        if (!res.ok) throw new Error("Failed to remove favorite place");
+        const updated = favoritePlaces.filter(p => p.placeId !== place.place_id);
+        setFavoritePlaces(updated);
+      } else {
+        // POST request
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/favorite-places`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${store.token}`
+            },
+            body: JSON.stringify({
+              placeId: place.place_id,
+              placeName: place.name,
+              placeImage: place.photos?.[0] || "https://via.placeholder.com/150"
+            })
+          }
+        );
+        if (!res.ok) throw new Error("Failed to add favorite place");
+        const updated = [...favoritePlaces, {
+          placeId: place.place_id,
+          placeName: place.name,
+          placeImage: place.photos?.[0] || "https://via.placeholder.com/150"
+        }];
+        setFavoritePlaces(updated);
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+
+
   useEffect(() => {
-    if(cocktail){
+    if (cocktail) {
       handleSearch(); // Call the handleSearch function to fetch places when the component mounts
     }
   }, [cocktail]); // useEffect hook to handle side effects in functional components
+
+
+  useEffect(() => {
+    if (!store.token) return;
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/favorite-places`, {
+      headers: {
+        Authorization: `Bearer ${store.token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        const formatted = data.map(p => ({
+          placeId: p.place_id,
+          placeName: p.place_name,
+          placeImage: p.place_image
+        }));
+        setFavoritePlaces(formatted);
+      })
+      .catch(console.error);
+  }, [store.token]);
 
 
 
@@ -202,6 +281,20 @@ export const GoogleApi = () => {
                     <p><strong>Rating:</strong> {place.rating}<i className="bi bi-star-fill"></i></p>
                     <p><strong>Reviews:</strong> {place.user_ratings_total}</p>
                     <button onClick={() => handleSelect(place.place_id)} className="btn btn-success">More info</button>
+                    <button
+                      className="btn btn-link"
+                      onClick={() => toggleFavoritePlace(place)}
+                    >
+                      <img
+                        src={
+                          favoritePlaces.some(f => f.placeId === place.place_id)
+                            ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png"
+                            : "https://img.icons8.com/?size=48&id=3294&format=png"
+                        }
+                        alt="Favorite Icon"
+                        style={{ width: "24px", height: "24px" }}
+                      />
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -278,7 +371,7 @@ export const GoogleApi = () => {
           </div>
 
         </div>
-      </div>         
+      </div>
       {showReviewModal && (
         <div className="modal d-block" tabIndex="-1" role="dialog" onClick={() => setShowReviewModal(false)}>
           <div className="modal-dialog" role="document" onClick={e => e.stopPropagation()}>
