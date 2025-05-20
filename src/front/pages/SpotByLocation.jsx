@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 //import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -13,10 +13,92 @@ export const SpotByLocation = () => {
     const [showPhotos, setShowPhotos] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [modalReviewText, setModalReviewText] = useState("");
-    const [loading, setLoading] = useState(false);     
+    const [loading, setLoading] = useState(false);
     const [favoritePlaces, setFavoritePlaces] = useState([]);
     const { cocktail } = useParams();
     const { store } = useGlobalReducer();
+    const navigate = useNavigate();
+
+    const toggleFavoritePlace = async (place) => {
+        if (!store?.token) {
+            alert("Please log in to add favorite places");
+            return navigate("/signin"); // ⬅️ Este return es importante
+        }
+
+        const isFavorite = favoritePlaces.some(f => f.placeId === place.place_id);
+
+        try {
+            if (isFavorite) {
+                // DELETE request
+                const res = await fetch(
+                    `${import.meta.env.VITE_BACKEND_URL}/api/favorite-places/${place.place_id}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            Authorization: `Bearer ${store.token}`
+                        }
+                    }
+                );
+                if (!res.ok) throw new Error("Failed to remove favorite place");
+                const updated = favoritePlaces.filter(p => p.placeId !== place.place_id);
+                setFavoritePlaces(updated);
+            } else {
+                // POST request
+                console.log("Saving photo_reference:", place.photos?.[0]?.photo_reference);
+                let imageUrl = "https://via.placeholder.com/150";
+
+                if (place.photo_url) {
+                    imageUrl = place.photo_url;
+                } else if (place.photos?.[0]?.photo_reference) {
+                    imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${import.meta.env.VITE_GOOGLE_API_KEY}`;
+                }
+
+                console.log("📸 Final image URL to be saved:", imageUrl);
+                console.log("🔐 Token:", store.token);
+
+
+                const res = await fetch(
+                    `${import.meta.env.VITE_BACKEND_URL}/api/favorite-places`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${store.token}`
+                        },
+                        body: JSON.stringify({
+                            placeId: place.place_id,
+                            placeName: place.name,
+                            placeImage: imageUrl,
+                            rating: place.rating,
+                            location: place.address
+                        })
+                    }
+                );
+                if (!res.ok) throw new Error("Failed to add favorite place");
+                const updated = [...favoritePlaces, {
+                    placeId: place.place_id,
+                    placeName: place.name,
+                    placeImage: imageUrl
+                }];
+                console.log("Photoossss????1!!!!!!", place.photos?.[0]);
+                console.log("!!!!Photo info from selectedPlace!!!!!:", place.photos?.[0]);
+                if (!place.photos || !place.photos[0]) {
+                    console.warn("🚫 No photo found in place object", place);
+                } else {
+                    console.log("✅ Photo reference found:", place.photos[0].photo_reference);
+                }
+
+
+
+                setFavoritePlaces(updated);
+            }
+        } catch (err) {
+            console.error(err);
+            alert(err.message);
+        }
+    };
+
+
 
 
 
@@ -95,6 +177,27 @@ export const SpotByLocation = () => {
             handleSearch(); // Call the handleSearch function to fetch places when the component mounts
         }
     }, [cocktail]); // useEffect hook to handle side effects in functional components
+
+    useEffect(() => {
+        if (!store.token) return;
+
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/favorite-places`, {
+            headers: {
+                Authorization: `Bearer ${store.token}`
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                const formatted = data.map(p => ({
+                    placeId: p.place_id,
+                    placeName: p.place_name,
+                    placeImage: p.place_image
+                }));
+                setFavoritePlaces(formatted);
+            })
+            .catch(console.error);
+    }, [store.token]);
+
 
 
 
@@ -219,6 +322,19 @@ export const SpotByLocation = () => {
                                         <p><strong>Rating:</strong> {place.rating}<i className="bi bi-star-fill"></i></p>
                                         <p><strong>Reviews:</strong> {place.user_ratings_total}</p>
                                         <button onClick={() => handleSelect(place.place_id)} className="btn btn-success">More info</button>
+                                        <button
+                                            className="btn btn-link"
+                                            onClick={() => toggleFavoritePlace(place)}
+                                        >
+                                            <img
+                                                src={favoritePlaces.some(f => f.placeId === place.place_id)
+                                                    ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png"
+                                                    : "https://img.icons8.com/?size=48&id=3294&format=png"}
+                                                alt="Favorite Icon"
+                                                style={{ width: "24px", height: "24px" }}
+                                            />
+                                        </button>
+
                                     </li>
                                 ))}
                             </ul>

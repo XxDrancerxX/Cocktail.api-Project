@@ -446,17 +446,34 @@ def get_favorite_places():
 def add_favorite_place():
     user_id = get_jwt_identity()
     data = request.json
-    if not all(key in data for key in ["placeId", "placeName", "placeImage"]):
+
+    print("🔥 Received favorite place data:", data)
+    print("👤 Current user ID:", user_id)
+
+    if not all(key in data for key in ["placeId", "placeName", "placeImage", "rating", "location"]):
         return jsonify({"message": "Missing required fields"}), 400
+
+    existing = FavoritePlaces.query.filter_by(
+        user_id=user_id, place_id=data["placeId"]).first()
+    if existing:
+        return jsonify({"message": "Already in favorites"}), 200
 
     try:
         favorite_place = FavoritePlaces(
-            user_id=user_id, place_id=data["placeId"], place_name=data["placeName"], place_image=data["placeImage"])
+            user_id=user_id,
+            place_id=data["placeId"],
+            place_name=data["placeName"],
+            place_image=data["placeImage"],
+            rating=data.get("rating"),            # ⭐️ optional
+            location=data.get("location")         # 📍 optional
+        )
         db.session.add(favorite_place)
         db.session.commit()
         return jsonify({"message": "Favorite place added"}), 201
     except Exception as e:
         db.session.rollback()
+        # 🔍 AQUI se imprimirá el error exacto
+        print("🔥 Error saving favorite place:", str(e))
         return jsonify({"message": "Error adding favorite", "error": str(e)}), 500
 
 
@@ -483,7 +500,7 @@ def add_favorite():
     user_id = get_jwt_identity()
     data = request.json
     if not all(key in data for key in ["drinkId", "drinkName", "drinkImage", "drinkGlass", "drinkCategory"]):
-     return jsonify({"message": "Missing required fields"}), 400
+        return jsonify({"message": "Missing required fields"}), 400
 
     try:
         favorite = Favorite(

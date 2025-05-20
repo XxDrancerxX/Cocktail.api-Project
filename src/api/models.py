@@ -66,7 +66,10 @@ class FavoritePlaces(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  
     place_id = db.Column(db.String(50), nullable=False)
     place_name = db.Column(db.String(120), nullable=False)
-    place_image = db.Column(db.String(255), nullable=False)
+    place_image = db.Column(db.String(1000), nullable=False)
+    rating = db.Column(db.Float, nullable=True) 
+    location = db.Column(db.String(255), nullable=True)  
+
 
     
     def serialize(self):
@@ -75,6 +78,8 @@ class FavoritePlaces(db.Model):
             "place_id": self.place_id,
             "place_name": self.place_name,
             "place_image": self.place_image,
+            "rating": self.rating,
+            "location": self.location
         }  
 
 # **User Registration**

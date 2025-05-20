@@ -93,7 +93,9 @@ export const Favorites = () => {
                         id: place.id,
                         placeId: place.place_id,
                         placeName: place.place_name,
-                        placeImage: place.place_image
+                        placeImage: place.place_image,
+                        rating: place.rating,          
+                        location: place.location || "Unknown"
                     };
 
                 })
@@ -141,20 +143,20 @@ export const Favorites = () => {
                 {favoritesDrinks.length > 0 ? (
                     <div className="cocktail-list">
                         {favoritesDrinks.map((drink) => (
-                            <div key={drink.drinkId} className="cocktail-card">
-                                <h2 className="cocktail-title">{drink.drinkName}</h2>
-                                <img className="cocktail-image" src={drink.drinkImage} alt={drink.drinkName} />
-                                <p className="cocktail-glass"><strong>Glass:</strong> {drink.drinkGlass || "N/A"}</p>
-                                <p className="cocktail-category"><strong>Category:</strong> {drink.drinkCategory || "N/A"}</p>
-
-                                {/* Remove Favorite Button */}
+                            <div key={drink.drinkId} className="favorite-card">
+                                <img src={drink.drinkImage} alt={drink.drinkName} className="favorite-image" />
+                                <h3 className="favorite-title">{drink.drinkName}</h3>
+                                <p><strong>Glass:</strong> {drink.drinkGlass}</p>
+                                <p><strong>Category:</strong> {drink.drinkCategory}</p>
+                                <p className="favorite-note">🍸 Tap the button to remove</p>
                                 <button
-                                    className="remove-favorite-button"
+                                    className="remove-button"
                                     onClick={() => removeFavoriteDrink(drink.drinkId)}
                                 >
                                     Remove Favorite
                                 </button>
                             </div>
+
                         ))}
                     </div>
                 ) : (
@@ -164,23 +166,27 @@ export const Favorites = () => {
                 <h2>My Favorite Places</h2>
 
                 {favoritesPlaces.length > 0 ? (
-                    <div className="cocktail-list">
+                    <div className="favorites-list">
                         {favoritesPlaces.map((place) => (
-                            <div key={place.placeId} className="cocktail-card">
-                                <h2 className="cocktail-title">{place.placeName}</h2>
-                                <img className="cocktail-image" src={place.placeImage} alt={place.placeName} />
-                                <p className="cocktail-glass"><strong>Glass:</strong> {place.glass || "N/A"}</p>
-                                <p className="cocktail-category"><strong>Category:</strong> {place.category || "N/A"}</p>
+                            <div key={place.placeId} className="favorite-card">
+                                <img src={place.placeImage} alt={place.placeName} className="favorite-image" />
+                                <h3 className="favorite-title">{place.placeName}</h3>
+                                <p className="favorite-rating">
+                                    {place.rating ? `⭐ ${place.rating} / 5` : "⭐ Rating: N/A"}
+                                </p>
 
-                                {/* Remove Favorite  place Button */}
+                                {/* 📍 City or Location */}
+                                <p className="favorite-location">
+                                    📍 {place.location || "Location unknown"}
+                                </p>
                                 <button
-                                    className="remove-favorite-button"
+                                    className="remove-button"
                                     onClick={() => removeFavoritePlace(place.placeId)}
                                 >
                                     Remove Favorite
                                 </button>
-
                             </div>
+
                         ))}
                     </div>
                 ) : (

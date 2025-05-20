@@ -1,4 +1,4 @@
-import { Link, useParams,useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useEffect, useState } from "react";
 //import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -110,7 +110,7 @@ export const GoogleApi = () => {
   const toggleFavoritePlace = async (place) => {
     if (!store?.token) {
       alert("Please log in to add favorite places");
-      navigate("/signin");
+      return navigate("/signin"); // ⬅️ Este return es importante
     }
 
     const isFavorite = favoritePlaces.some(f => f.placeId === place.place_id);
@@ -132,6 +132,19 @@ export const GoogleApi = () => {
         setFavoritePlaces(updated);
       } else {
         // POST request
+        console.log("Saving photo_reference:", place.photos?.[0]?.photo_reference);
+        let imageUrl = "https://via.placeholder.com/150";
+
+        if (place.photo_url) {
+          imageUrl = place.photo_url;
+        } else if (place.photos?.[0]?.photo_reference) {
+          imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${import.meta.env.VITE_GOOGLE_API_KEY}`;
+        }
+
+        console.log("📸 Final image URL to be saved:", imageUrl);
+        console.log("🔐 Token:", store.token);
+        
+
         const res = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/api/favorite-places`,
           {
@@ -143,7 +156,9 @@ export const GoogleApi = () => {
             body: JSON.stringify({
               placeId: place.place_id,
               placeName: place.name,
-              placeImage: place.photos?.[0] || "https://via.placeholder.com/150"
+              placeImage: imageUrl,
+              rating: place.rating, 
+              location: place.address
             })
           }
         );
@@ -151,8 +166,18 @@ export const GoogleApi = () => {
         const updated = [...favoritePlaces, {
           placeId: place.place_id,
           placeName: place.name,
-          placeImage: place.photos?.[0] || "https://via.placeholder.com/150"
+          placeImage: imageUrl
         }];
+        console.log("Photoossss????1!!!!!!", place.photos?.[0]);
+        console.log("!!!!Photo info from selectedPlace!!!!!:", place.photos?.[0]);
+        if (!place.photos || !place.photos[0]) {
+          console.warn("🚫 No photo found in place object", place);
+        } else {
+          console.log("✅ Photo reference found:", place.photos[0].photo_reference);
+        }
+
+
+
         setFavoritePlaces(updated);
       }
     } catch (err) {
@@ -286,11 +311,9 @@ export const GoogleApi = () => {
                       onClick={() => toggleFavoritePlace(place)}
                     >
                       <img
-                        src={
-                          favoritePlaces.some(f => f.placeId === place.place_id)
-                            ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png"
-                            : "https://img.icons8.com/?size=48&id=3294&format=png"
-                        }
+                        src={favoritePlaces.some(f => f.placeId === place.place_id)
+                          ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png"
+                          : "https://img.icons8.com/?size=48&id=3294&format=png"}
                         alt="Favorite Icon"
                         style={{ width: "24px", height: "24px" }}
                       />
