@@ -143,7 +143,7 @@ export const GoogleApi = () => {
 
         console.log("📸 Final image URL to be saved:", imageUrl);
         console.log("🔐 Token:", store.token);
-        
+
 
         const res = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/api/favorite-places`,
@@ -157,7 +157,7 @@ export const GoogleApi = () => {
               placeId: place.place_id,
               placeName: place.name,
               placeImage: imageUrl,
-              rating: place.rating, 
+              rating: place.rating,
               location: place.address
             })
           }
@@ -217,13 +217,12 @@ export const GoogleApi = () => {
 
 
   return (
-    <div className="container-fluid min-vh-100" style={{ height: "100vh" }}>
-      <div className="row px-md-5" style={{ height: "70%" }}>
-
+    <div className="container-fluid min-vh-100 d-flex flex-column googleapi-background">
+      <div className="row px-md-5 flex-grow-1" style={{ overflow: "hidden", minHeight: "65vh" }}>
         {/* LEFT: Place details */}
-        <div className="col-4 h-100 d-flex flex-column">
+        <div className="col-4 overflow-auto d-flex flex-column gap-2" style={{ maxHeight: "70vh" }}>
           {selectedPlace ? (
-            <div className="card flex-grow-1">
+            <div className="card flex-grow-1 googleapi-detail-card">
               {selectedPlace.photos[0] && (
                 <img
                   src={selectedPlace.photos[0]}
@@ -237,8 +236,7 @@ export const GoogleApi = () => {
                   }}
                 />
               )}
-              <div className="text-wrapper p-2" style={{ overflowY: 'auto', flexShrink: 1, maxHeight: '400px' }}
-              >
+              <div className="text-wrapper p-2 overflow-auto" style={{ flexGrow: 1 }}>
                 <h5>{selectedPlace.name}</h5>
                 <p><strong className={selectedPlace.opening_hours?.open_now ? "text-success" : "text-danger"}>
                   {selectedPlace.opening_hours?.open_now ? "Open" : "Closed"}
@@ -265,16 +263,23 @@ export const GoogleApi = () => {
                 </a>
               </div>
             </div>
-          ) : <p><strong>Click a place to see more details</strong></p>}
+          ) : <p></p>}
         </div>
 
         {/* CENTER: Photos */}
-        <div className="col-4 h-100 overflow-auto d-flex flex-column gap-2">
-          {(!showPhotos || !selectedPlace || !selectedPlace.photos || selectedPlace.photos.length <= 1) && (
+        <div className="col-4 d-flex flex-column gap-2" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+          {selectedPlace && !showPhotos && selectedPlace.photos?.length > 1 && (
             <div className="text-muted fst-italic m-auto text-center p-2">
               Click <strong>"See more photos"</strong> to view the gallery.
             </div>
           )}
+
+          {!selectedPlace && (
+            <div className="text-muted fst-italic m-auto text-center p-2">
+              <strong>Click a place to see more details</strong>
+            </div>
+          )}
+
           {showPhotos && selectedPlace.photos && selectedPlace.photos.slice(1).map((photoUrl, idx) => (
             <img
               key={idx}
@@ -282,11 +287,10 @@ export const GoogleApi = () => {
               alt={`Photo ${idx + 2}`}
               style={{
                 width: "100%",
-                maxHeight: "180px",
-                objectFit: "contain", // ✅ will prevent cropping
-                objectPosition: "center center",
-                backgroundColor: "#f8f9fa", // optional clean background
-                borderRadius: "5px"
+                height: "150px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                backgroundColor: "#f8f9fa"
               }}
             />
           ))}
@@ -294,28 +298,33 @@ export const GoogleApi = () => {
         </div>
 
         {/* RIGHT: List of places */}
-        <div className="col-4 h-100 d-flex flex-column">
+        <div className="col-4 d-flex flex-column" style={{ maxHeight: "70vh", overflowY: "auto" }}>
           <div className="flex-grow-1 overflow-auto">
             {error && <div className="alert alert-danger">{error}</div>}
             {places.length > 0 ? (
               <ul className="list-group">
                 {places.map((place, index) => (
-                  <li key={index} className="list-group-item">
+                  <li className="list-group-item googleapi-place-card">
                     <h5>{place.name}</h5>
                     <p>{place.address}</p>
                     <p><strong>Rating:</strong> {place.rating}<i className="bi bi-star-fill"></i></p>
                     <p><strong>Reviews:</strong> {place.user_ratings_total}</p>
-                    <button onClick={() => handleSelect(place.place_id)} className="btn btn-success">More info</button>
+                    <button
+                      className="btn btn-neon"
+                      onClick={() => handleSelect(place.place_id)}
+                    >
+                      More Info
+                    </button>
                     <button
                       className="btn btn-link"
                       onClick={() => toggleFavoritePlace(place)}
                     >
                       <img
+                        className="favorite-icon"
                         src={favoritePlaces.some(f => f.placeId === place.place_id)
                           ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png"
                           : "https://img.icons8.com/?size=48&id=3294&format=png"}
                         alt="Favorite Icon"
-                        style={{ width: "24px", height: "24px" }}
                       />
                     </button>
                   </li>
@@ -325,96 +334,106 @@ export const GoogleApi = () => {
           </div>
         </div>
       </div>
-
-      <hr></hr>
-      <div className="row px-md-5" style={{ height: "30%" }}>
+      {selectedPlace && <hr />}
+      <div className="row px-md-5"
+        style={{
+          maxHeight: "30vh",           // ✅ mantenemos la altura para el footer
+          overflowY: "auto",           // ✅ permite scroll si las reseñas son muy altas
+          paddingBottom: "0.5rem",
+          marginBottom: "0.5rem",
+          display: "flex",
+          alignItems: "flex-start"
+        }}
+      >
         <div className="col-12 h-100">
-          <div className="reviews-container d-flex flex-row flex-nowrap overflow-auto"
+          <div
+            className="reviews-container"
             style={{
-              height: "100%",
-              overflowY: "hidden",
-              paddingLeft: "1rem",
-              paddingRight: "1rem",
-              justifyContent: "space-evenly"   // NEW LINE instead of margin-right on cards
+              display: "flex",
+              flexWrap: "nowrap",
+              overflowX: "auto",
+              gap: "1.5rem",
+              padding: "1rem 2rem",
+              alignItems: "stretch",
+              justifyContent: "center"
             }}
           >
-            {reviews.length === 0 && (
+            {selectedPlace && reviews.length === 0 && (
               <div className="text-muted fst-italic m-auto">
                 Please click on <strong>See Reviews</strong> above to see all the reviews.
               </div>
             )}
 
+
             {reviews.map((r, index) => (
-              <div key={index}
-                className="card border-dark mb-3"
-                style={{
-                  maxWidth: "18rem",
-                  flex: "1 1 auto",     // 👈 this allows cards to grow/shrink evenly
-                  overflow: "hidden"
-                }}>
+              <div className="card googleapi-review-card">
                 <div className="card-header">
                   <strong>Rating: {r.rating}<i className="bi bi-star-fill"></i></strong>
                 </div>
-                <div className="card-body d-flex flex-column justify-content-between" style={{ height: "100%" }}>
-                  <div>
-                    <h5 className="card-title">{r.author_name}:</h5>
-                    <p className="card-text" style={{
+                <div
+                  className="card-body d-flex flex-column"
+                  style={{ flexGrow: 1 }}
+                >
+                  <h5 className="card-title">{r.author_name}:</h5>
+                  <p
+                    className="card-text"
+                    style={{
                       display: selectedReview === r ? "block" : "-webkit-box",
-                      WebkitLineClamp: selectedReview === r ? "unset" : 5,
+                      WebkitLineClamp: selectedReview === r ? "unset" : 3,
                       WebkitBoxOrient: "vertical",
                       overflow: "hidden",
-                      textOverflow: "ellipsis"
-                    }}>
-                      {r.text}
-                    </p>
-                    {r.text && r.text.length > 150 && (
-                      <a href="#" onClick={e => {
+                      textOverflow: "ellipsis",
+                      marginTop: 0,
+                      marginBottom: 0
+                    }}
+                  >
+                    {r.text}
+                  </p>
+
+                  {r.text && r.text.length > 150 && (
+                    <a
+                      href="#"
+                      onClick={(e) => {
                         e.preventDefault();
                         setModalReviewText(r.text);
                         setShowReviewModal(true);
-                      }}>
-                        See full review
-                      </a>
-                    )}
+                      }}
+                    >
+                      See full review
+                    </a>
+                  )}
 
-
-                    <br />
-                    <small className="text-muted d-block mt-2">
-                      {r.relative_time_description || "No date available"}
-                    </small>
-                  </div>
+                  <small className="text-muted d-block mt-2">
+                    {r.relative_time_description || "No date available"}
+                  </small>
                 </div>
               </div>
             ))}
-
-
-
-
-
           </div>
-
         </div>
       </div>
-      {showReviewModal && (
-        <div className="modal d-block" tabIndex="-1" role="dialog" onClick={() => setShowReviewModal(false)}>
-          <div className="modal-dialog" role="document" onClick={e => e.stopPropagation()}>
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Full Review</h5>
-                <button type="button" className="close" onClick={() => setShowReviewModal(false)}>
-                  <span>&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <p>{modalReviewText}</p>
+      {
+        showReviewModal && (
+          <div className="modal d-block" tabIndex="-1" role="dialog" onClick={() => setShowReviewModal(false)}>
+            <div className="modal-dialog" role="document" onClick={e => e.stopPropagation()}>
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Full Review</h5>
+                  <button type="button" className="close" onClick={() => setShowReviewModal(false)}>
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <p>{modalReviewText}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
 
-    </div>
+    </div >
   );
 };
 
