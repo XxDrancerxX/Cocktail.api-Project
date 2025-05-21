@@ -5,18 +5,6 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-<<<<<<< HEAD
-
-app = Flask(__name__)
-CORS(app)
-jwt = JWTManager(app)
-
-# **Database Configuration**
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-
-=======
 # app = Flask(__name__)
 # CORS(app)
 # jwt = JWTManager(app)
@@ -24,11 +12,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # **Database Configuration**
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  
 # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.config["JWT_SECRET_KEY"] = "supersecretkey"
+
 
 # db = SQLAlchemy(app)
 db = SQLAlchemy()
->>>>>>> d6409d5e16b6c5afa4c238a7089b95a1f089c2eb
 
 
 # **User Model**
