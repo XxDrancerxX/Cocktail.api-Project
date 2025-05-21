@@ -1,5 +1,6 @@
 """Initial migration
 
+
 Revision ID: 077dddc90fc4
 Revises: 
 Create Date: 2025-05-21 19:41:46.999135

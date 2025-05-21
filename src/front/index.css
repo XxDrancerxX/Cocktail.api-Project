@@ -20,7 +20,7 @@
 
 /* Create Cocktail Button with Glow Effect */
 .create-cocktail-btn {
-  background-color: #58074c;
+  background-color: #a1048a;
   color: #fff;
   font-size: 18px;
   padding: 12px 20px;
@@ -69,25 +69,37 @@
   text-align: center;
 }
 
+.results-container.glow {
+  box-shadow: 0 0 20px #ff00ff, 0 0 40px #00aaff;
+  transition: box-shadow 0.3s ease-in-out;
+  border: 2px solid #ff00ff;
+}
+
 /* Custom Ingredient List */
 .custom-ingredient-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 20px;
+  gap: 1.5rem;
+  padding: 2rem;
 }
+
 
 /* Ingredient Card */
 .ingredient-card {
-  width: 200px;
-  padding: 15px;
-  margin: 10px;
-  text-align: center;
+  width: 180px;
+  min-height: 280px;
   background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
 
 /* Hover Effect */
 .ingredient-card:hover {
@@ -98,8 +110,10 @@
 /* Ingredient Image */
 .ingredient-card img {
   width: 80%;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  max-height: 130px;
+  object-fit: contain;
+  margin: 0 auto 10px auto;
+  display: block;
 }
 
 /* Box Around Select Ingredient */
@@ -107,14 +121,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 2px solid #117ce7;
+  border: 2px solid #FF00FF;
   border-radius: 8px;
   padding: 10px;
   margin-top: 10px;
   width: fit-content;
   background-color: #fff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 8px #FF00FF;
+  margin-left: auto;   /* 👈 esto centra horizontalmente */
+  margin-right: auto;  /* 👈 esto también */
 }
+
+
+.ingredient-checkbox:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.6), 0 0 25px rgba(255, 0, 255, 0.4);
+}
+
 
 /* Select Ingredient Checkbox */
 .ingredient-checkbox input {
@@ -130,11 +153,14 @@
 
 .search-container {
   display: flex;
-  margin: auto;
-  padding: 20px;
-  min-height: 100vh;
   flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  background: linear-gradient(to right, #ffe0f1, #e0f7ff);
 }
+
 
 /* Search Header */
 .search-header {
@@ -142,44 +168,41 @@
   justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .search-input-field {
-  width: 60%;
-  padding: 10px;
+  width: 250px;
+  padding: 8px 12px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 5px;
+  outline: none;
+}
+
+.search-input-field:focus {
+  border-color: #ff00ff;
+  box-shadow: 0 0 10px #ff00ff;
 }
 
 .search-action-button {
-  background-color: #ee56c1;
-  color: #fff;
+  background-color: #ff00ff;
+  color: white;
   font-size: 16px;
-  padding: 10px 15px;
+  padding: 8px 16px;
   border: none;
-  cursor: pointer;
   border-radius: 5px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 10px #ff00ff;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .search-action-button:hover {
   transform: scale(1.05);
-  box-shadow: 0px 4px 8px rgba(255, 99, 71, 0.4);
-  background-color: #631463;
+  background-color: #d000d0;
 }
 
 /* Results Container */
 .results-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 20px;
-  margin-top: 20px;
-  border: 2px solid #7e6be8;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -190,6 +213,7 @@
   background-color: #fff;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 
 /* Cocktail Cards */
 .cocktail-card-container {
@@ -479,8 +503,12 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  background: linear-gradient(to right, #ffe0f1, #e0f7ff); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 /* Floating Drink Images */
 .floating-drink {
@@ -515,18 +543,6 @@
 
 /*|| {Cards of drinks in  the findSpot.jsx view}|| */
 
-/* Main Page Container */
-.main-page-container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Centered Button Container */
 .button-container {
   position: absolute;
@@ -537,26 +553,35 @@
   padding: 15px;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px #ff00ff88, 0 0 40px #00aaff55;
   z-index: 100;
 }
+
 
 /* Navigation Buttons */
 .nav-button {
   padding: 12px 18px;
   font-size: 16px;
-  background-color: #ff6347;
+  background-color: #ff00ff; /* rosa neón */
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow:
+    0 0 10px #ff00ff,
+    0 0 20px #00aaff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-family: "Orbitron", sans-serif;
 }
 
 .nav-button:hover {
   transform: scale(1.1);
-  background-color: #e5533d;
+  background-color: #d000d0;
+  box-shadow:
+    0 0 15px #ff00ff,
+    0 0 30px #00aaff;
 }
+
 
 /* Floating Drink Images */
 .floating-drink {
@@ -564,9 +589,23 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
+  object-fit: cover;
   animation: floatDrinks 10s infinite alternate ease-in-out;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 0 10px #ff00ff,
+    0 0 20px #ff00ff,
+    0 0 30px #00aaff;
+  transition: transform 0.3s ease;
 }
+
+.floating-drink:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 15px #ff00ff,
+    0 0 30px #00aaff,
+    0 0 45px #ff00ff;
+}
+
 
 /* Floating Animation */
 @keyframes floatDrinks {
@@ -807,3 +846,17 @@
   height: 24px;
 }
 
+
+.glow-black-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000000;
+  text-shadow:
+    0 0 5px #ff00ff,
+    0 0 10px #ff00ff,
+    0 0 20px #ff00ff,
+    0 0 40px #ff00ff;
+  font-family: "Orbitron", sans-serif;
+  margin-left: 25px;
+  margin-top: 20px;
+}
