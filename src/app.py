@@ -15,6 +15,9 @@ if not FRONTEND_URL:
     raise RuntimeError("Missing required env var: FRONTEND_URL")
 if not DATABASE_URL:
     raise RuntimeError("Missing required env var: DATABASE_URL")
+if not JWT_SECRET_KEY:
+    raise RuntimeError("Missing required env var: JWT_SECRET_KEY")
+
 
 
 # Fix database URL formatting for PostgreSQL
