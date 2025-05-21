@@ -18,13 +18,15 @@ if not DATABASE_URL:
 if not JWT_SECRET_KEY:
     raise RuntimeError("Missing required env var: JWT_SECRET_KEY")
 
+
+
 # Fix database URL formatting for PostgreSQL
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
 
 print("🔗 FRONTEND_URL:", FRONTEND_URL)
 print("🗄️ DATABASE_URL:", DATABASE_URL)
-print("🔒 JWT_SECRET_KEY:", JWT_SECRET_KEY)
+
 
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints

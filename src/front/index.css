@@ -178,6 +178,15 @@
   border-radius: 10px;
   background-color: #fff;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+    margin-top: 51px;
+    border: 2px solid #7e6be8;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Cocktail Cards */
@@ -527,7 +536,6 @@
 /* Centered Button Container */
 .button-container {
   position: absolute;
-  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
