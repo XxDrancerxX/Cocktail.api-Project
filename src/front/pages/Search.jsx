@@ -217,21 +217,7 @@ export const Search = () => {
 
 
     return (
-        <div className="search-container">
-            <div className="search-bar">
-                {/* <input
-                    className="search-input"
-                    placeholder="Search for a cocktail..."
-                    onChange={(e) => setSearch(e.target.value)}
-                    value={search} /> */}
-                {/* <div className="search-page-container"> */}
-                {/* Button Container */}
-                {/*             <div className="button-container">
-                <button className="logout-action-button" onClick={handleLogout}>
-                    Logout
-                </button>
-            </div> */}
-            </div>
+        <div className="search-container">         
             {/* Search Bar */}
             <div className="search-header">
                 <input
@@ -310,7 +296,7 @@ export const Search = () => {
                         </div>
                     ))
                 ) : (
-                    <p className="no-results-message">No drinks found</p>
+                    <p className="no-results-message">Search cocktails or drinksto show results</p>
                 )}
 
             </div>

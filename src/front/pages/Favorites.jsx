@@ -128,71 +128,63 @@ export const Favorites = () => {
     }, []);
 
 
-    return (
-        <div className="favorites-container">
-            {/* Sidebar for User Info */}
-            <div className="user-info">
-                <h3>User: {user.name}</h3>
-                <p>{user.email}</p>
+   return (
+  <div className="favorites-container neon-background">
+    {/* User Info at Top */}
+    <div className="user-info">
+      <h3>User: {user.name}</h3>
+      <p>{user.email}</p>
+    </div>
+    <hr className="section-divider-1" />
+
+    {/* Content Section */}
+    <div className="favorites-content">
+      <h2>My Favorite Cocktails</h2>
+      {favoritesDrinks.length > 0 ? (
+        <div className="cocktail-list">
+          {favoritesDrinks.map((drink) => (
+            <div key={drink.drinkId} className="favorite-card">
+              <img src={drink.drinkImage} alt={drink.drinkName} className="favorite-image" />
+              <h3 className="favorite-title">{drink.drinkName}</h3>
+              <p><strong>Glass:</strong> {drink.drinkGlass}</p>
+              <p><strong>Category:</strong> {drink.drinkCategory}</p>
+              <p className="favorite-note">🍸 Tap the button to remove</p>
+              <button className="remove-button" onClick={() => removeFavoriteDrink(drink.drinkId)}>
+                Remove Favorite
+              </button>
             </div>
-
-
-            {/* Favorites Drinks List */}
-            <div className="favorites-content">
-                <h2>My Favorite Cocktails</h2>
-                {favoritesDrinks.length > 0 ? (
-                    <div className="cocktail-list">
-                        {favoritesDrinks.map((drink) => (
-                            <div key={drink.drinkId} className="favorite-card">
-                                <img src={drink.drinkImage} alt={drink.drinkName} className="favorite-image" />
-                                <h3 className="favorite-title">{drink.drinkName}</h3>
-                                <p><strong>Glass:</strong> {drink.drinkGlass}</p>
-                                <p><strong>Category:</strong> {drink.drinkCategory}</p>
-                                <p className="favorite-note">🍸 Tap the button to remove</p>
-                                <button
-                                    className="remove-button"
-                                    onClick={() => removeFavoriteDrink(drink.drinkId)}
-                                >
-                                    Remove Favorite
-                                </button>
-                            </div>
-
-                        ))}
-                    </div>
-                ) : (
-                    <p className="no-favorites">You haven't added any favorites drinks yet.</p>
-                )}
-                {/* This part is for the favorite places */}
-                <h2>My Favorite Places</h2>
-
-                {favoritesPlaces.length > 0 ? (
-                    <div className="favorites-list">
-                        {favoritesPlaces.map((place) => (
-                            <div key={place.placeId} className="favorite-card">
-                                <img src={place.placeImage} alt={place.placeName} className="favorite-image" />
-                                <h3 className="favorite-title">{place.placeName}</h3>
-                                <p className="favorite-rating">
-                                    {place.rating ? `⭐ ${place.rating} / 5` : "⭐ Rating: N/A"}
-                                </p>
-
-                                {/* 📍 City or Location */}
-                                <p className="favorite-location">
-                                    📍 {place.location || "Location unknown"}
-                                </p>
-                                <button
-                                    className="remove-button"
-                                    onClick={() => removeFavoritePlace(place.placeId)}
-                                >
-                                    Remove Favorite
-                                </button>
-                            </div>
-
-                        ))}
-                    </div>
-                ) : (
-                    <p className="no-favorites">You haven't added any favorites places yet.</p>
-                )}
-            </div>
+          ))}
         </div>
-    );
+      ) : (
+        <p className="no-favorites">You haven't added any favorites drinks yet.</p>
+      )}
+
+      <hr className="section-divider" />
+
+      <h2>My Favorite Places</h2>
+      {favoritesPlaces.length > 0 ? (
+        <div className="favorites-list">
+          {favoritesPlaces.map((place) => (
+            <div key={place.placeId} className="favorite-card">
+              <img src={place.placeImage} alt={place.placeName} className="favorite-image" />
+              <h3 className="favorite-title">{place.placeName}</h3>
+              <p className="favorite-rating">
+                {place.rating ? `⭐ ${place.rating} / 5` : "⭐ Rating: N/A"}
+              </p>
+              <p className="favorite-location">{place.location || "Location unknown"}</p>
+              <p className="favorite-note">📍 Tap the button to remove</p>
+              <button className="remove-button" onClick={() => removeFavoritePlace(place.placeId)}>
+                Remove Favorite
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="no-favorites">You haven't added any favorites places yet.</p>
+      )}
+      <hr className="section-divider" />
+    </div>
+  </div>
+);
+
 };
