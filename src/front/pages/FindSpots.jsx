@@ -53,7 +53,7 @@ export const FindSpots = () => {
     try {
       const res = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idDrink}`)
       if (!res.ok) {
-       throw new Error(`Lookup failed: ${res.status} ${res.statusText}`);
+        throw new Error(`Lookup failed: ${res.status} ${res.statusText}`);
       }
       const data = await res.json()
       return data.drinks[0]
@@ -61,7 +61,6 @@ export const FindSpots = () => {
     }
     catch (err) {
       console.log(`Error in catch: ${err.message}`);
-      setError(`Server error: ${err.message}`);
       return null
     }
   }
@@ -120,8 +119,10 @@ export const FindSpots = () => {
     <div
       className="page-wrapper"
       style={{
-        position: "relative",   //establishes the coordinate system for any absolutely positioned children, lets the overlay fill its parent.
-        minHeight: "100vh"      // ensures it’s at least the screen height
+        position: "relative",
+        minHeight: "100vh",   // ensures it’s at least the screen height
+        background: "linear-gradient(to right, #ffe0f1, #e0f7ff)", // ✅ Neon pastel gradient
+        padding: "2rem 1rem"
       }}
     >
       {loading && (
@@ -152,24 +153,32 @@ export const FindSpots = () => {
           <button
             key={item}
             className={
-              "btn btn-lg " +
+              "btn btn-lg fw-bold rounded-pill " +
               (item === selectedCategory
-                ? "btn-primary"
-                : "btn-outline-primary") +
+                ? "text-white"
+                : "text-dark border border-primary") +
               " px-4 py-2"
             }
+            style={{
+              background: item === selectedCategory ? "#FF00FF" : "transparent",
+              borderColor: "#FF00FF",
+              boxShadow: item === selectedCategory
+                ? "0 0 10px #FF00FF, 0 0 20px #FF00FF"
+                : "none",
+              transition: "all 0.3s"
+            }}
             onClick={() => {
               setSelectedCategory(item);
               fetchDrinksFromCategories(item);
-
             }}
           >
             {item}
           </button>
+
         ))}
       </div>
       {/* show any error messages here */}
-      {error && (
+      {!loading && error && drinks.length === 0 && (
         <div className="alert alert-danger text-center" role="alert">
           {error}
         </div>
@@ -179,15 +188,44 @@ export const FindSpots = () => {
         <p>No drinks found in {selectedCategory}.</p>
       )}
       {!loading && drinks.length > 0 && (
-        <div id="container-find-spot" className="container ">
+        <div id="container-find-spot" className="container">
           <div className="row gx-3 gy-4">
             {
               drinks.map(d => (
-                <div key={d.idDrink} className="col-6 col-sm-4 col-md-3 col-lg-2">
-                  <div className="card cocktail-find-spot">
+                <div
+                  key={d.idDrink}
+                  className="col-6 col-sm-4 col-md-4 col-lg-3 d-flex align-items-stretch"
+                >
+                  <div
+                    className="card cocktail-find-spot  hover-glow-card "
+                    style={{
+                      background: "rgba(255,255,255,0.85)",
+                      border: "2px solidrgba(76, 0, 255, 0.14)",
+                      borderRadius: "12px",
+                      minHeight: "100%",
+                      width: "100%",
+                      maxWidth: "260px", // slightly wider than before
+                      margin: "0 auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      boxShadow: "0 0 10px rgba(255, 0, 255, 0.1)",
+                    }}
+                  >
                     <img src={d.strDrinkThumb} className="card-img-top" alt={d.strDrink} />
                     <div className="card-body">
-                      <h5 className="card-title">{d.strDrink}</h5>
+                      <h5
+                        className="card-title text-center fw-bold"
+                        style={{
+                          background: "linear-gradient(to right, #a855f7, #60a5fa)", // soft violet to blue
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          fontSize: "1.05rem",
+                          fontFamily: "'Orbitron', sans-serif",
+                          minHeight: "48px" // ensure consistent height
+                        }}
+                      >
+                        {d.strDrink}
+                      </h5>
                       <p className="card-text">{d.strInstructions}</p>
                       <ul className="ingredient-list">
                         {/* 3) we use Array.from to create an array of 15 elements and map over it to get the ingredients and measures.
@@ -221,13 +259,35 @@ export const FindSpots = () => {
                       </ul>
                       <div className="d-flex gap-2 justify-content-center mt-3">
                         <Link to={`/spot-by-location/${encodeURIComponent(d.strDrink)}`}>
-                          <button onClick={() => { }}>
+                          <button
+                            className="btn"
+                            style={{
+                              background: "linear-gradient(90deg, #6366f1, #ec4899)",
+                              color: "#fff",
+                              fontWeight: "500",
+                              border: "none",
+                              borderRadius: "8px",
+                              padding: "0.4rem 0.7rem", // 👈 smaller padding
+                              minWidth: "100px" // 👈 narrower width than before
+                            }}
+                          >
                             Spots by Location
                           </button>
                         </Link>
                         <Link to={`/google-api/${encodeURIComponent(d.strDrink)}`}>
-                          <button onClick={() => { }}>
-                            Spots nearby
+                          <button
+                            className="btn"
+                            style={{
+                              background: "linear-gradient(90deg, #6366f1, #ec4899)",
+                              color: "#fff",
+                              fontWeight: "500",
+                              border: "none",
+                              borderRadius: "8px",
+                              padding: "0.4rem 0.7rem", // 👈 smaller padding
+                              minWidth: "100px" // 👈 narrower width than before
+                            }}
+                          >
+                            Spots Nearby
                           </button>
                         </Link>
                       </div>

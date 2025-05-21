@@ -3,21 +3,16 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 import requests
 import os
-from flask import Flask, request, jsonify, url_for, Blueprint,current_app
-from api.models import db, User
+from flask import Flask, request, jsonify, url_for, Blueprint, current_app
+from api.models import db, User, Favorite, FavoritePlaces
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-# ==>> loads the environment variables from the .env file, pip install python-dotenv
-from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
 # ==>> this is used to create a JWT token for the user, pip install flask-jwt-extended
-from flask_jwt_extended import create_access_token, decode_token
+from flask_jwt_extended import create_access_token, decode_token, jwt_required, get_jwt_identity
 from datetime import timedelta
 
 
-
-
-load_dotenv()    # reads .env and sets those variables into your environment
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 if not FRONTEND_URL:
     raise RuntimeError("Missing required env var: FRONTEND_URL")
@@ -31,7 +26,7 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 # ==>> you can talk to your flask endpoins whithout the browser blocking the request.
-CORS(api)
+# CORS(api) ==>>  You don’t need to call CORS on the blueprint; it inherits it from the app.Because we did app.register_blueprint(api, url_prefix="/api") on app.py
 
 
 # ==>> this is the endpoint that will be called from the front end
@@ -147,7 +142,8 @@ def get_places_by_location():
     GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
     print(">>> [by-location] STEP 1: data =", data, " type:", type(data))
     if not isinstance(data, dict):
-        return jsonify({"error": "Data must be a JSON object"}), 400 ## ==>> check if the data is a dictionary, if not, return a 400 error.
+        # ==>> check if the data is a dictionary, if not, return a 400 error.
+        return jsonify({"error": "Data must be a JSON object"}), 400
     if not GOOGLE_API_KEY:
         return jsonify({"error": "Google API key not found"}), 500
 
@@ -299,7 +295,6 @@ def get_place_details():
     if not details:
         return jsonify({"error": "No details found"}), 404
 
-
     # 4) Google Photos
     photo_urls = []
     for photo in details.get("photos", []):
@@ -319,9 +314,8 @@ def get_place_details():
         "website":                details.get("website"),
         "reviews":                details.get("reviews", []),
         "photos":                 photo_urls,
-        "coordinates":            details["geometry"]["location"]      
+        "coordinates":            details["geometry"]["location"]
     }), 200
-
 
 
 @api.route('/signin', methods=['POST'])
@@ -341,7 +335,7 @@ def sign_in_user():
     if not check_password_hash(user.password, password):
         return jsonify({"error": "Invalid password"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
 
     return jsonify({
         "token": access_token,
@@ -439,7 +433,133 @@ def request_password_reset():
     return jsonify(generic_msg), 200
 
 
+@api.route("/favorite-places", methods=["GET"])
+@jwt_required()
+def get_favorite_places():
+    user_id = get_jwt_identity()
+    favorite_places = FavoritePlaces.query.filter_by(user_id=user_id).all()
+    return jsonify([fav.serialize() for fav in favorite_places]), 200
+
+
+@api.route("/favorite-places", methods=["POST"])
+@jwt_required()
+def add_favorite_place():
+    user_id = get_jwt_identity()
+    data = request.json
+
+    print("🔥 Received favorite place data:", data)
+    print("👤 Current user ID:", user_id)
+
+    if not all(key in data for key in ["placeId", "placeName", "placeImage", "rating", "location"]):
+        return jsonify({"message": "Missing required fields"}), 400
+
+    existing = FavoritePlaces.query.filter_by(
+        user_id=user_id, place_id=data["placeId"]).first()
+    if existing:
+        return jsonify({"message": "Already in favorites"}), 200
+
+    try:
+        favorite_place = FavoritePlaces(
+            user_id=user_id,
+            place_id=data["placeId"],
+            place_name=data["placeName"],
+            place_image=data["placeImage"],
+            rating=data.get("rating"),            # ⭐️ optional
+            location=data.get("location")         # 📍 optional
+        )
+        db.session.add(favorite_place)
+        db.session.commit()
+        return jsonify({"message": "Favorite place added"}), 201
+    except Exception as e:
+        db.session.rollback()
+        # 🔍 AQUI se imprimirá el error exacto
+        print("🔥 Error saving favorite place:", str(e))
+        return jsonify({"message": "Error adding favorite", "error": str(e)}), 500
+
+
+@api.route("/favorite-places/<place_id>", methods=["DELETE"])
+@jwt_required()
+def delete_favorite_place(place_id):
+    user_id = get_jwt_identity()
+    favorite_place = FavoritePlaces.query.filter_by(
+        user_id=user_id, place_id=place_id).first()
+    if favorite_place:
+        try:
+            db.session.delete(favorite_place)
+            db.session.commit()
+            return jsonify({"message": "Favorite removed"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"message": "Error deleting favorite", "error": str(e)}), 500
+    return jsonify({"message": "Favorite not found"}), 404
+
+
+@api.route("/favorites", methods=["POST"])
+@jwt_required()
+def add_favorite():
+    user_id = get_jwt_identity()
+    data = request.json
+    if not all(key in data for key in ["drinkId", "drinkName", "drinkImage", "drinkGlass", "drinkCategory"]):
+        return jsonify({"message": "Missing required fields"}), 400
+
+    try:
+        favorite = Favorite(
+            user_id=user_id,
+            drink_id=data["drinkId"],
+            drink_name=data["drinkName"],
+            drink_image=data["drinkImage"],
+            drink_glass=data["drinkGlass"],
+            drink_category=data["drinkCategory"],
+        )
+        db.session.add(favorite)
+        db.session.commit()
+        return jsonify({"message": "Favorite added"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Error adding favorite", "error": str(e)}), 500
+
+# **Get Favorites**
+
+
+@api.route("/favorites", methods=["GET"])
+@jwt_required()
+def get_favorites():
+    user_id = get_jwt_identity()
+    favorites = Favorite.query.filter_by(user_id=user_id).all()
+    return jsonify([fav.serialize() for fav in favorites]), 200
+
+# **Delete Favorite**
+
+
+@api.route("/favorites/<drink_id>", methods=["DELETE"])
+@jwt_required()
+def delete_favorite(drink_id):
+    user_id = get_jwt_identity()
+    favorite = Favorite.query.filter_by(
+        user_id=user_id, drink_id=str(drink_id)).first()
+    if favorite:
+        try:
+            db.session.delete(favorite)
+            db.session.commit()
+            return jsonify({"message": "Favorite removed"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"message": "Error deleting favorite", "error": str(e)}), 500
+    return jsonify({"message": "Favorite not found"}), 404
+
+
 @api.route("/users", methods=["GET"])
 def get_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
+
+
+# ==>> this is the endpoint that will be called from the front end to show the user profile.
+@api.route('/user', methods=['GET'])
+@jwt_required()
+def get_logged_in_user():
+    user = User.query.get(get_jwt_identity())
+    if not user:
+        # ==>> check if the user is present in the database
+        return jsonify({"error": "User not found"}), 404
+    return jsonify(user.serialize()), 200
