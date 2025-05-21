@@ -232,7 +232,7 @@ export const Search = () => {
             </div>
 
             {/* Display Results */}
-            <div className="results-container">
+            <div className={`results-container ${drinks.length > 0 ? "glow" : ""}`}>
                 {drinks.length > 0 ? (
                     drinks.map((drink) => (
                         <div key={drink.idDrink} className="cocktail-card-container">
@@ -296,7 +296,8 @@ export const Search = () => {
                         </div>
                     ))
                 ) : (
-                    <p className="no-results-message">Search cocktails or drinksto show results</p>
+                    <p className="no-results-message">Search cocktails or drinks to show results</p>
+
                 )}
 
             </div>

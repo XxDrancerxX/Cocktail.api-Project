@@ -60,7 +60,13 @@ export const Custom = () => {
     };
 
     return (
-        <div className="custom-app">
+        <div className="custom-app" style={{
+            minHeight: "100vh",
+            background: "linear-gradient(to right, #ffe0f1, #e0f7ff)",
+            backgroundAttachment: "fixed",
+            backgroundSize: "cover",
+            paddingBottom: "60px"
+        }}>
             {/* Button & Results Container */}
             <div className="button-results-container">
                 <div className="button-container">
@@ -86,7 +92,9 @@ export const Custom = () => {
                 )}
             </div>
 
-            <h1>Ingredients List</h1>
+            <h1 className="glow-black-title">Ingredients List</h1>
+
+
 
             <div className="custom-ingredient-list">
                 {ingredients.length > 0 ? (
