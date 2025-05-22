@@ -1,10 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { Link } from "react-router-dom"; // Asegúrate de importar esto arriba
-
-// Dentro del return:
-
+import { Link } from "react-router-dom"; 
 
 export const Profile = () => {
   const { store } = useGlobalReducer();
@@ -34,6 +31,17 @@ export const Profile = () => {
       >
         Welcome, {store.user?.name || "User"}!
       </h1>
+
+      <p
+        style={{
+          color: "#555",
+          fontSize: "1.2rem",
+          fontFamily: "'Orbitron', sans-serif"
+        }}
+      >
+        You are logged in successfully. Let’s explore!
+      </p>
+
       <Link
         to="/MainPage"
         className="btn btn-glow mt-4"
@@ -51,18 +59,8 @@ export const Profile = () => {
         onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
         onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
-        Go to Main Page
+        My Profile
       </Link>
-      <br />
-      <p
-        style={{
-          color: "#555",
-          fontSize: "1.2rem",
-          fontFamily: "'Orbitron', sans-serif"
-        }}
-      >
-        You are logged in successfully. Let’s explore!
-      </p>
     </div>
   );
 };

@@ -516,9 +516,49 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  animation: floatDrinks 10s infinite alternate ease-in-out;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  animation: floatDrinks 10s infinite ease-in-out;
+  box-shadow:
+    0 0 10px #ff00ff,
+    0 0 20px #ff00ff,
+    0 0 30px #00aaff;
+  transition: transform 0.3s ease;
 }
+
+.floating-drink:nth-child(3n) {
+  animation-duration: 11s;
+  animation-delay: 2s;
+}
+
+.floating-drink:nth-child(4n) {
+  animation-duration: 12s;
+  animation-delay: 1s;
+}
+
+.floating-drink:nth-child(5n) {
+  animation-duration: 9s;
+  animation-delay: 3s;
+}
+
+@keyframes floatDrinks {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-20px) rotate(3deg) scale(1.03);
+  }
+  50% {
+    transform: translateY(10px) rotate(-2deg) scale(1.01);
+  }
+  75% {
+    transform: translateY(-15px) rotate(2deg) scale(1.04);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+
 
 /* ||{Cards of drinks in  the findSpot.jsx view}|| */
 /* ensure every card is the same height */
@@ -610,15 +650,22 @@
 /* Floating Animation */
 @keyframes floatDrinks {
   0% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-20px) rotate(3deg) scale(1.03);
   }
   50% {
-    transform: translateY(-50px) rotate(20deg);
+    transform: translateY(10px) rotate(-2deg) scale(1.01);
+  }
+  75% {
+    transform: translateY(-15px) rotate(2deg) scale(1.04);
   }
   100% {
-    transform: translateY(50px) rotate(-20deg);
+    transform: translateY(0) rotate(0deg) scale(1);
   }
 }
+
 /* Main Page Button */
 .handle-main-page-button {
   background-color: #f947c4;
@@ -871,4 +918,78 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+.created-ingredients-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.created-ingredients-list li {
+  background: #ffe0f1;
+  border-left: 5px solid #ff00ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 8px #ff00ff33;
+  font-weight: 500;
+  color: #333;
+  width: 100%;
+}
+
+.cocktail-name {
+  font-size: 1.7rem; /* antes era 2rem */
+  font-weight: bold;
+  color: #330066;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+
+.ingredients-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ingredients-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #000;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.created-ingredients-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+}
+
+.created-ingredients-list li {
+  background: #fff0fb;
+  color: #8a007a;
+  padding: 8px 16px;
+  border: 1px solid #ff00ff;
+  border-radius: 50px;
+  box-shadow: 0 0 6px #ffb3ff;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+  text-align: center;
+  min-width: 140px;
+}
+
+.created-ingredients-list li:hover {
+  transform: scale(1.05);
+  background: #ffe4fa;
+  box-shadow: 0 0 12px #ff00ff88;
 }

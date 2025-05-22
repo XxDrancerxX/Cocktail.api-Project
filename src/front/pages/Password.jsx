@@ -1,6 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 
 export const Password = () => {
+  const [email, setEmail] = useState("");
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccess(null);
+    setError(null);
+
+    if (!email) {
+      setError("Please enter your email.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/password-request`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data?.error || "Something went wrong.");
+      } else {
+        setSuccess(data.msg || "Check your email for a reset link.");
+      }
+    } catch (err) {
+      setError("Network error. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -14,9 +52,9 @@ export const Password = () => {
         padding: "30px",
       }}
     >
-      {/* Form box with neon-form class */}
-      <div
+      <form
         className="neon-form p-4"
+        onSubmit={handleSubmit}
         style={{
           backgroundColor: "#1a1a1a",
           borderRadius: "16px",
@@ -36,32 +74,26 @@ export const Password = () => {
           Password Recovery
         </h4>
 
-        {/* Inputs */}
-        {[
-          { type: "text", placeholder: "User Name" },
-          { type: "email", placeholder: "Email" },
-          { type: "password", placeholder: "New Password" },
-          { type: "tel", placeholder: "Confirm New Password" },
-        ].map((input, i) => (
-          <div className="mb-3" key={i}>
-            <input
-              type={input.type}
-              placeholder={input.placeholder}
-              className="form-control"
-              style={{
-                background: "#000",
-                color: "#FF00FF",
-                border: "2px solid #FF00FF",
-                boxShadow: "0 0 6px #FF00FF",
-                borderRadius: "8px",
-              }}
-            />
-          </div>
-        ))}
+        <div className="mb-3">
+          <input
+            type="email"
+            placeholder="Enter your email"
+            className="form-control"
+            style={{
+              background: "#000",
+              color: "#FF00FF",
+              border: "2px solid #FF00FF",
+              boxShadow: "0 0 6px #FF00FF",
+              borderRadius: "8px",
+            }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-        {/* Button */}
         <div className="text-center mt-4">
           <button
+            type="submit"
             className="btn"
             style={{
               background: "#FF00FF",
@@ -72,19 +104,28 @@ export const Password = () => {
               borderRadius: "8px",
               padding: "10px 25px",
             }}
-            onMouseEnter={(e) =>
-              (e.target.style.boxShadow =
-                "0 0 16px #FF00FF, 0 0 32px #FF00FF, 0 0 48px #FF00FF")
-            }
-            onMouseLeave={(e) =>
-              (e.target.style.boxShadow =
-                "0 0 12px #FF00FF, 0 0 24px #FF00FF")
-            }
           >
-            Reset Password
+            {loading ? "Sending..." : "Reset Password"}
           </button>
         </div>
-      </div>
+
+        {error && (
+          <p className="text-danger mt-3 text-center">{error}</p>
+        )}
+
+        {success && (
+          <p
+            className="mt-3 text-center"
+            style={{
+              color: "#00eaff",
+              textShadow: "0 0 6px #00eaff, 0 0 12px #00eaff",
+              fontWeight: "500",
+            }}
+          >
+            {success}
+          </p>
+        )}
+      </form>
     </div>
   );
 };

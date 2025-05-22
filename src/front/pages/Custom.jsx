@@ -81,20 +81,20 @@ export const Custom = () => {
                 {/* Display created cocktail */}
                 {cocktailCreated && (
                     <div className="results-container">
-                        <h2>{cocktailCreated.name}</h2>
-                        <p><strong>Ingredients:</strong></p>
-                        <ul>
-                            {cocktailCreated.ingredients.map((ingredient, index) => (
-                                <li key={index}>{ingredient}</li>
-                            ))}
-                        </ul>
+                        <h2 className="cocktail-name">{cocktailCreated.name}</h2>
+                        <div className="ingredients-section">
+                            <p className="ingredients-title">Ingredients:</p>
+                            <ul className="created-ingredients-list">
+                                {cocktailCreated.ingredients.map((ingredient, index) => (
+                                    <li key={index}>{ingredient}</li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                 )}
             </div>
 
             <h1 className="glow-black-title">Ingredients List</h1>
-
-
 
             <div className="custom-ingredient-list">
                 {ingredients.length > 0 ? (

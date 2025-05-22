@@ -134,7 +134,7 @@ export const Navbar = () => {
               <i className="bi bi-arrow-left-circle-fill"></i>
             </button>
           )}
-          {store.user && (
+          {store.user && location.pathname !== "/profile" && (
             <span
               style={{
                 marginRight: "1rem",
@@ -193,7 +193,7 @@ export const Navbar = () => {
           )}
 
           {/* My MainPage */}
-          {store.token && location.pathname !== "/MainPage" && (
+          {store.token && location.pathname !== "/MainPage" && location.pathname !== "/profile" &&(
             <Link
               to="/MainPage"
               className="btn me-2"

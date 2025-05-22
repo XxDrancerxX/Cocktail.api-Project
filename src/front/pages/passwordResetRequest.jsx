@@ -22,7 +22,6 @@ export const PasswordRequestReset = () => {
 
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/password-request`, {
-
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -37,9 +36,8 @@ export const PasswordRequestReset = () => {
                 return;
             }
 
-            setSuccess("Check your email for the password reset link.");
+            setSuccess("If you entered a valid email, you will receive a password reset link shortly.");
 
-            
             setTimeout(() => {
                 navigate("/signin", { replace: true });
             }, 3000);
@@ -53,35 +51,97 @@ export const PasswordRequestReset = () => {
     };
 
     return (
-        <div className="container justify-content-center d-flex flex-column vh-100 align-items-center">
-            <h2 className="display-6 text-primary text-center mb-4">
-                <i className="bi bi-envelope-fill me-2"></i>
-                Forgot your password?
-            </h2>
-            <div className="card shadow-sm" style={{ maxWidth: "400px", width: "100%" }}>
-                <div className="card-body">
-                    <form className="d-flex flex-column gap-3" onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Email address:</label>
-                            <input
-                                className="form-control"
-                                id="email"
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
+        <div
+            style={{
+                minHeight: "100vh",
+                width: "100vw",
+                background: "linear-gradient(to right, #fce4ec, #e3f2fd)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "'Orbitron', sans-serif",
+                padding: "30px",
+            }}
+        >
+            <div
+                className="neon-form p-4"
+                style={{
+                    backgroundColor: "#1a1a1a",
+                    borderRadius: "16px",
+                    boxShadow: "0 0 25px rgba(255, 0, 255, 0.3)",
+                    maxWidth: "400px",
+                    width: "100%",
+                }}
+            >
+                <h4
+                    className="text-center mb-4"
+                    style={{
+                        color: "#fff",
+                        textShadow: "0 0 6px #FF00FF, 0 0 12px #FF00FF",
+                        fontWeight: "bold",
+                    }}
+                >
+                    Password Recovery
+                </h4>
+
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="form-control"
+                            style={{
+                                background: "#000",
+                                color: "#FF00FF",
+                                border: "2px solid #FF00FF",
+                                boxShadow: "0 0 6px #FF00FF",
+                                borderRadius: "8px",
+                            }}
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="btn w-100"
+                        style={{
+                            background: "#FF00FF",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            boxShadow: "0 0 12px #FF00FF, 0 0 24px #FF00FF",
+                            transition: "all 0.3s ease-in-out",
+                            borderRadius: "8px",
+                        }}
+                        onMouseEnter={(e) =>
+                            (e.target.style.boxShadow = "0 0 16px #FF00FF, 0 0 32px #FF00FF, 0 0 48px #FF00FF")
+                        }
+                        onMouseLeave={(e) =>
+                            (e.target.style.boxShadow = "0 0 12px #FF00FF, 0 0 24px #FF00FF")
+                        }
+                    >
+                        {loading ? "Sending..." : "Reset Password"}
+                    </button>
+
+                    {error && (
+                        <div className="alert alert-danger mt-3 text-center">
+                            {error}
                         </div>
-                        <button type="submit" className="btn btn-primary w-100">
-                            {loading ? "Sending..." : "Send reset link"}
-                        </button>
-                        {error && (
-                            <div className="alert alert-danger mt-3">{error}</div>
-                        )}
-                        {success && (
-                            <div className="alert alert-success mt-3">{success}</div>
-                        )}
-                    </form>
-                </div>
+                    )}
+
+                    {success && (
+                        <div
+                            className="mt-3 text-center"
+                            style={{
+                                color: "#00eaff",
+                                textShadow: "0 0 6px #00eaff, 0 0 12px #00eaff",
+                                fontWeight: "500",
+                            }}
+                        >
+                            {success}
+                        </div>
+                    )}
+                </form>
             </div>
         </div>
     );

@@ -17,14 +17,12 @@ export const SignIn = () => {
     const token = localStorage.getItem("token");
     const expiration = localStorage.getItem("token_expiration");
 
-    if (token && expiration && Date.now() > parseInt(expiration, 10)) {  // Check if token is expired
+    if (token && expiration && Date.now() > parseInt(expiration, 10)) {
       localStorage.removeItem("token");
       localStorage.removeItem("token_expiration");
       setError("Your session has expired. Please sign in again.");
     }
   }, []);
-
-
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -150,8 +148,8 @@ export const SignIn = () => {
             borderRadius: "8px"
           }}
           onMouseEnter={(e) =>
-          (e.target.style.boxShadow =
-            "0 0 16px #FF00FF, 0 0 32px #FF00FF, 0 0 48px #FF00FF")
+            (e.target.style.boxShadow =
+              "0 0 16px #FF00FF, 0 0 32px #FF00FF, 0 0 48px #FF00FF")
           }
           onMouseLeave={(e) =>
             (e.target.style.boxShadow = "0 0 12px #FF00FF, 0 0 24px #FF00FF")
