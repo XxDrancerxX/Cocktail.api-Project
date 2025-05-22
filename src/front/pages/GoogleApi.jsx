@@ -334,7 +334,8 @@ export const GoogleApi = () => {
           </div>
         </div>
       </div>
-      {selectedPlace && <hr />}
+      {/* FOOTER: Reviews */}
+      {selectedPlace && <hr className="section-divider-1" />}
       <div className="row px-md-5"
         style={{
           maxHeight: "30vh",           // ✅ mantenemos la altura para el footer
@@ -368,7 +369,7 @@ export const GoogleApi = () => {
             {reviews.map((r, index) => (
               <div className="card googleapi-review-card">
                 <div className="card-header">
-                  <strong>Rating: {r.rating}<i className="bi bi-star-fill"></i></strong>
+                  <strong>Rating: {r.rating} ⭐</strong>
                 </div>
                 <div
                   className="card-body d-flex flex-column"
