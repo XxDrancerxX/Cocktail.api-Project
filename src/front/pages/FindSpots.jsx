@@ -10,6 +10,21 @@ export const FindSpots = () => {
   const [error, setError] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("");
   const [loading, setLoading] = useState(false);
+  const [favoriteDrinks, setFavoriteDrinks] = useState([]);
+
+
+  // Function to toggle favorite drinks
+  // This function checks if the drink is already in the favoriteDrinks array.
+  // If it is, it removes it from the array. If it isn't, it adds it to the array.
+  const toggleFavoriteDrink = (drink) => {
+    const isFav = favoriteDrinks.some(f => f.idDrink === drink.idDrink);
+    if (isFav) {
+      setFavoriteDrinks(favoriteDrinks.filter(f => f.idDrink !== drink.idDrink));
+    } else {
+      setFavoriteDrinks([...favoriteDrinks, drink]);
+    }
+  };
+
 
 
 
@@ -226,6 +241,24 @@ export const FindSpots = () => {
                       >
                         {d.strDrink}
                       </h5>
+                      <div className="d-flex justify-content-center mt-2">
+                        <button
+                          className="btn btn-link p-0"
+                          onClick={() => toggleFavoriteDrink(d)}
+                          style={{ alignSelf: "center" }}
+                        >
+                          <img
+                            className="favorite-icon"
+                            src={
+                              favoriteDrinks.some(f => f.idDrink === d.idDrink)
+                                ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png" // Corazón lleno
+                                : "https://img.icons8.com/?size=48&id=3294&format=png" // Corazón vacío
+                            }
+                            alt="Favorite Icon"
+                            style={{ width: "24px", height: "24px" }}
+                          />
+                        </button>
+                      </div>
                       <p className="card-text">{d.strInstructions}</p>
                       <ul className="ingredient-list">
                         {/* 3) we use Array.from to create an array of 15 elements and map over it to get the ingredients and measures.
@@ -297,8 +330,9 @@ export const FindSpots = () => {
               ))}
           </div>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 
 }

@@ -4,7 +4,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer";
 //import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export const SpotByLocation = () => {
-    const [location, setLocation] = useState();
+    const [location, setLocation] = useState("");
     const [places, setPlaces] = useState([]);
     const [error, setError] = useState("");
     const [selectedPlace, setSelectedPlace] = useState(null);
@@ -15,6 +15,8 @@ export const SpotByLocation = () => {
     const [modalReviewText, setModalReviewText] = useState("");
     const [loading, setLoading] = useState(false);
     const [favoritePlaces, setFavoritePlaces] = useState([]);
+    const [hasSearched, setHasSearched] = useState(false);
+    const [searchError, setSearchError] = useState("");
     const { cocktail } = useParams();
     const { store } = useGlobalReducer();
     const navigate = useNavigate();
@@ -103,6 +105,15 @@ export const SpotByLocation = () => {
 
 
     const handleSearch = async () => {
+        setHasSearched(false); // Reinicia búsqueda
+        setSearchError("");     // Limpia errores previos
+
+        if (!location || location.trim() === "") {
+            setSearchError("Please enter a location to search for places.");
+            return;
+        }
+
+        setHasSearched(true);
         setSelectedPlace(null);
         setError("");
         setPlaces([]);
@@ -110,14 +121,11 @@ export const SpotByLocation = () => {
 
         try {
             const payload = { location, cocktail };
-            const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/api/places/by-location`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                }
-            );
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/places/by-location`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.error || `HTTP ${res.status}`);
@@ -202,44 +210,285 @@ export const SpotByLocation = () => {
 
 
     return (
-        <div className="container-fluid min-vh-100 position-relative" style={{ height: "100vh" }}>
-            {/* Loader overlay to show loading state */}
+        //     <div className="container-fluid min-vh-100 position-relative" style={{ height: "100vh" }}>
+        //         {/* Loader overlay to show loading state */}
+        //         {loading && (
+        //             <div className="loader-overlay" style={{
+        //                 position: "absolute", top: 0, left: 0,
+        //                 width: "100%", height: "100%",
+        //                 display: "flex", justifyContent: "center", alignItems: "center",
+        //                 backgroundColor: "rgba(255,255,255,0.8)", zIndex: 999
+        //             }}>
+        //                 <div className="spinner-border" role="status">
+        //                     <span className="visually-hidden">Loading…</span>
+        //                 </div>
+        //             </div>
+        //         )}
+        //         <div className="row mb-4">
+        //             <div className="col-md-6 offset-md-3 d-flex">
+        //                 <input
+        //                     type="text"
+        //                     className="form-control me-2"
+        //                     placeholder="e.g. Miami, FL or 10001"
+        //                     value={location}
+        //                     onChange={e => setLocation(e.target.value)}
+        //                     onKeyDown={e => e.key === 'Enter' && handleSearch()}
+        //                 />
+        //                 <button className="btn btn-primary" onClick={handleSearch}>
+        //                     Search
+        //                 </button>
+        //                 <small className="form-text text-muted">
+        //                     You can enter a city/state (e.g. “Miami, FL”), a ZIP code (e.g. “10001”), or a full address (e.g. “1600 Amphitheatre Pkwy, Mountain View, CA”).
+        //                 </small>
+        //             </div>
+        //         </div>
+        //         <div className="row px-md-5" style={{ height: "70%" }}>
+
+        //             {/* LEFT: Place details */}
+        //             <div className="col-4 h-100 d-flex flex-column">
+        //                 {selectedPlace ? (
+        //                     <div className="card flex-grow-1">
+        //                         {selectedPlace.photos[0] && (
+        //                             <img
+        //                                 src={selectedPlace.photos[0]}
+        //                                 className="card-img-top"
+        //                                 alt={selectedPlace.name}
+        //                                 style={{
+        //                                     width: "100%",
+        //                                     height: "250px",
+        //                                     objectFit: "contain",
+        //                                     backgroundColor: "#f8f9fa"
+        //                                 }}
+        //                             />
+        //                         )}
+        //                         <div className="text-wrapper p-2" style={{ overflowY: 'auto', flexShrink: 1, maxHeight: '400px' }}
+        //                         >
+        //                             <h5>{selectedPlace.name}</h5>
+        //                             <p><strong className={selectedPlace.opening_hours?.open_now ? "text-success" : "text-danger"}>
+        //                                 {selectedPlace.opening_hours?.open_now ? "Open" : "Closed"}
+        //                             </strong></p>
+        //                             <p>{selectedPlace.formatted_address}</p>
+        //                             <p>{selectedPlace.formatted_phone_number}</p>
+        //                             <p><a href={selectedPlace.website}><strong>Go to the website</strong></a></p>
+        //                             {selectedPlace.opening_hours?.weekday_text && (
+        //                                 <div>
+        //                                     <strong>Opening hours:</strong>
+        //                                     <ul>
+        //                                         {selectedPlace.opening_hours.weekday_text.map((day, idx) => (
+        //                                             <li key={idx}>{day}</li>
+        //                                         ))}
+        //                                     </ul>
+        //                                 </div>
+        //                             )}
+        //                             <a href="#" onClick={e => { e.preventDefault(); showsReviews(selectedPlace.reviews); }}>
+        //                                 <strong>See Reviews</strong>
+        //                             </a>
+        //                             <br />
+        //                             <a href="#" onClick={showMorePhotos}>
+        //                                 {showPhotos ? "Hide photos" : "See more photos"}
+        //                             </a>
+        //                         </div>
+        //                     </div>
+        //                 ) : <p><strong>Click a place to see more details</strong></p>}
+        //             </div>
+
+        //             {/* CENTER: Photos */}
+        //             <div className="col-4 h-100 overflow-auto d-flex flex-column gap-2">
+        //                 {(!showPhotos || !selectedPlace || !selectedPlace.photos || selectedPlace.photos.length <= 1) && (
+        //                     <div className="text-muted fst-italic m-auto text-center p-2">
+        //                         Click <strong>"See more photos"</strong> to view the gallery.
+        //                     </div>
+        //                 )}
+        //                 {showPhotos && selectedPlace.photos && selectedPlace.photos.slice(1).map((photoUrl, idx) => (
+        //                     <img
+        //                         key={idx}
+        //                         src={photoUrl}
+        //                         alt={`Photo ${idx + 2}`}
+        //                         style={{
+        //                             width: "100%",
+        //                             maxHeight: "180px",
+        //                             objectFit: "contain", // ✅ will prevent cropping
+        //                             objectPosition: "center center",
+        //                             backgroundColor: "#f8f9fa", // optional clean background
+        //                             borderRadius: "5px"
+        //                         }}
+        //                     />
+        //                 ))}
+
+        //             </div>
+
+        //             {/* RIGHT: List of places */}
+        //             <div className="col-4 h-100 d-flex flex-column">
+        //                 <div className="flex-grow-1 overflow-auto">
+        //                     {error && <div className="alert alert-danger">{error}</div>}
+        //                     {places.length > 0 ? (
+        //                         <ul className="list-group">
+        //                             {places.map((place, index) => (
+        //                                 <li key={index} className="list-group-item">
+        //                                     <h5>{place.name}</h5>
+        //                                     <p>{place.address}</p>
+        //                                     <p><strong>Rating:</strong> {place.rating}<i className="bi bi-star-fill"></i></p>
+        //                                     <p><strong>Reviews:</strong> {place.user_ratings_total}</p>
+        //                                     <button onClick={() => handleSelect(place.place_id)} className="btn btn-success">More info</button>
+        //                                     <button
+        //                                         className="btn btn-link"
+        //                                         onClick={() => toggleFavoritePlace(place)}
+        //                                     >
+        //                                         <img
+        //                                             src={favoritePlaces.some(f => f.placeId === place.place_id)
+        //                                                 ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png"
+        //                                                 : "https://img.icons8.com/?size=48&id=3294&format=png"}
+        //                                             alt="Favorite Icon"
+        //                                             style={{ width: "24px", height: "24px" }}
+        //                                         />
+        //                                     </button>
+
+        //                                 </li>
+        //                             ))}
+        //                         </ul>
+        //                     ) : <p>No places found.</p>}
+        //                 </div>
+        //             </div>
+        //         </div>
+
+        //         <hr></hr>
+        //         {/* BOTTOM: Reviews */}
+        //         <div className="row px-md-5" style={{ height: "30%" }}>
+        //             <div className="col-12 h-100">
+        //                 <div className="reviews-container d-flex flex-row flex-nowrap overflow-auto"
+        //                     style={{
+        //                         height: "100%",
+        //                         overflowY: "hidden",
+        //                         paddingLeft: "1rem",
+        //                         paddingRight: "1rem",
+        //                         justifyContent: "space-evenly"   // NEW LINE instead of margin-right on cards
+        //                     }}
+        //                 >
+        //                     {reviews.length === 0 && (
+        //                         <div className="text-muted fst-italic m-auto">
+        //                             Please click on <strong>See Reviews</strong> above to see all the reviews.
+        //                         </div>
+        //                     )}
+
+        //                     {reviews.map((r, index) => (
+        //                         <div key={index}
+        //                             className="card border-dark mb-3"
+        //                             style={{
+        //                                 maxWidth: "18rem",
+        //                                 flex: "1 1 auto",     // 👈 this allows cards to grow/shrink evenly
+        //                                 overflow: "hidden"
+        //                             }}>
+        //                             <div className="card-header">
+        //                                 <strong>Rating: {r.rating}<i className="bi bi-star-fill"></i></strong>
+        //                             </div>
+        //                             <div className="card-body d-flex flex-column justify-content-between" style={{ height: "100%" }}>
+        //                                 <div>
+        //                                     <h5 className="card-title">{r.author_name}:</h5>
+        //                                     <p className="card-text" style={{
+        //                                         display: selectedReview === r ? "block" : "-webkit-box",
+        //                                         WebkitLineClamp: selectedReview === r ? "unset" : 5,
+        //                                         WebkitBoxOrient: "vertical",
+        //                                         overflow: "hidden",
+        //                                         textOverflow: "ellipsis"
+        //                                     }}>
+        //                                         {r.text}
+        //                                     </p>
+        //                                     {r.text && r.text.length > 150 && (
+        //                                         <a href="#" onClick={e => {
+        //                                             e.preventDefault();
+        //                                             setModalReviewText(r.text);
+        //                                             setShowReviewModal(true);
+        //                                         }}>
+        //                                             See full review
+        //                                         </a>
+        //                                     )}
+
+
+        //                                     <br />
+        //                                     <small className="text-muted d-block mt-2">
+        //                                         {r.relative_time_description || "No date available"}
+        //                                     </small>
+        //                                 </div>
+        //                             </div>
+        //                         </div>
+        //                     ))}
+
+
+
+
+
+        //                 </div>
+
+        //             </div>
+        //         </div>
+        //         {showReviewModal && (
+        //             <div className="modal d-block" tabIndex="-1" role="dialog" onClick={() => setShowReviewModal(false)}>
+        //                 <div className="modal-dialog" role="document" onClick={e => e.stopPropagation()}>
+        //                     <div className="modal-content">
+        //                         <div className="modal-header">
+        //                             <h5 className="modal-title">Full Review</h5>
+        //                             <button type="button" className="close" onClick={() => setShowReviewModal(false)}>
+        //                                 <span>&times;</span>
+        //                             </button>
+        //                         </div>
+        //                         <div className="modal-body">
+        //                             <p>{modalReviewText}</p>
+        //                         </div>
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //         )}
+
+
+        //     </div>
+        <div className="container-fluid min-vh-100 d-flex flex-column googleapi-background">
+            {/* Loading Spinner */}
             {loading && (
-                <div className="loader-overlay" style={{
-                    position: "absolute", top: 0, left: 0,
-                    width: "100%", height: "100%",
-                    display: "flex", justifyContent: "center", alignItems: "center",
-                    backgroundColor: "rgba(255,255,255,0.8)", zIndex: 999
-                }}>
-                    <div className="spinner-border" role="status">
-                        <span className="visually-hidden">Loading…</span>
+                <div className="loader-overlay">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
             )}
-            <div className="row mb-4">
-                <div className="col-md-6 offset-md-3 d-flex">
-                    <input
-                        type="text"
-                        className="form-control me-2"
-                        placeholder="e.g. Miami, FL or 10001"
-                        value={location}
-                        onChange={e => setLocation(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                    />
-                    <button className="btn btn-primary" onClick={handleSearch}>
-                        Search
-                    </button>
-                    <small className="form-text text-muted">
-                        You can enter a city/state (e.g. “Miami, FL”), a ZIP code (e.g. “10001”), or a full address (e.g. “1600 Amphitheatre Pkwy, Mountain View, CA”).
-                    </small>
+
+            {/* Search Input */}
+            <div className="search-header mt-5 mb-4">
+                <input
+                    type="text"
+                    className="search-input-field"
+                    placeholder="e.g. Miami, FL or 10001"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                />
+                <button className="search-action-button" onClick={handleSearch}>
+                    Search
+                </button>
+            </div>
+
+            {/* Conditional Errors */}
+            {/* Error Handling - Centered and consistent */}
+            <div className="d-flex justify-content-center">
+                <div className="w-75">
+                    {searchError && (
+                        <div className="alert alert-danger text-center">{searchError}</div>
+                    )}
+                    {hasSearched && !loading && !searchError && error && (
+                        <div className="alert alert-danger text-center">{error}</div>
+                    )}
+                    {hasSearched && !loading && !searchError && places.length === 0 && !error && (
+                        <div className="alert alert-warning text-center">No places found for this location.</div>
+                    )}
                 </div>
             </div>
-            <div className="row px-md-5" style={{ height: "70%" }}>
 
-                {/* LEFT: Place details */}
-                <div className="col-4 h-100 d-flex flex-column">
-                    {selectedPlace ? (
-                        <div className="card flex-grow-1">
+
+            {/* Main Grid */}
+            <div className="row px-md-5 flex-grow-1" style={{ overflow: "hidden", minHeight: "65vh" }}>
+                {/* LEFT: Details */}
+                <div className="col-4 overflow-auto d-flex flex-column gap-2" style={{ maxHeight: "70vh" }}>
+                    {selectedPlace && (
+                        <div className="card flex-grow-1 googleapi-detail-card">
                             {selectedPlace.photos[0] && (
                                 <img
                                     src={selectedPlace.photos[0]}
@@ -253,8 +502,7 @@ export const SpotByLocation = () => {
                                     }}
                                 />
                             )}
-                            <div className="text-wrapper p-2" style={{ overflowY: 'auto', flexShrink: 1, maxHeight: '400px' }}
-                            >
+                            <div className="text-wrapper p-2 overflow-auto" style={{ flexGrow: 1 }}>
                                 <h5>{selectedPlace.name}</h5>
                                 <p><strong className={selectedPlace.opening_hours?.open_now ? "text-success" : "text-danger"}>
                                     {selectedPlace.opening_hours?.open_now ? "Open" : "Closed"}
@@ -281,16 +529,22 @@ export const SpotByLocation = () => {
                                 </a>
                             </div>
                         </div>
-                    ) : <p><strong>Click a place to see more details</strong></p>}
+                    )}
                 </div>
 
-                {/* CENTER: Photos */}
-                <div className="col-4 h-100 overflow-auto d-flex flex-column gap-2">
-                    {(!showPhotos || !selectedPlace || !selectedPlace.photos || selectedPlace.photos.length <= 1) && (
+                <div className="col-4 d-flex flex-column gap-2" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+                    {selectedPlace && !showPhotos && selectedPlace.photos?.length > 1 && (
                         <div className="text-muted fst-italic m-auto text-center p-2">
                             Click <strong>"See more photos"</strong> to view the gallery.
                         </div>
                     )}
+
+                    {places.length > 0 && !selectedPlace && (
+                        <div className="text-muted fst-italic m-auto text-center p-2">
+                            <strong>Click a place to see more details</strong>
+                        </div>
+                    )}
+
                     {showPhotos && selectedPlace.photos && selectedPlace.photos.slice(1).map((photoUrl, idx) => (
                         <img
                             key={idx}
@@ -298,143 +552,133 @@ export const SpotByLocation = () => {
                             alt={`Photo ${idx + 2}`}
                             style={{
                                 width: "100%",
-                                maxHeight: "180px",
-                                objectFit: "contain", // ✅ will prevent cropping
-                                objectPosition: "center center",
-                                backgroundColor: "#f8f9fa", // optional clean background
-                                borderRadius: "5px"
+                                height: "150px",
+                                objectFit: "cover",
+                                borderRadius: "8px",
+                                backgroundColor: "#f8f9fa"
                             }}
                         />
                     ))}
 
                 </div>
 
-                {/* RIGHT: List of places */}
-                <div className="col-4 h-100 d-flex flex-column">
+                {/* RIGHT: List of Places */}
+                <div className="col-4 d-flex flex-column" style={{ maxHeight: "70vh", overflowY: "auto" }}>
                     <div className="flex-grow-1 overflow-auto">
-                        {error && <div className="alert alert-danger">{error}</div>}
-                        {places.length > 0 ? (
+                        {/* Mostrar mensaje si no hay resultados después de buscar */}
+                        {hasSearched && places.length === 0 && (
+                            <p className="text-center text-muted">No places found.</p>
+                        )}
+
+                        {/* Mostrar lista de lugares si hay resultados */}
+                        {places.length > 0 && (
                             <ul className="list-group">
                                 {places.map((place, index) => (
-                                    <li key={index} className="list-group-item">
+                                    <li key={index} className="list-group-item googleapi-place-card">
                                         <h5>{place.name}</h5>
                                         <p>{place.address}</p>
                                         <p><strong>Rating:</strong> {place.rating}<i className="bi bi-star-fill"></i></p>
                                         <p><strong>Reviews:</strong> {place.user_ratings_total}</p>
-                                        <button onClick={() => handleSelect(place.place_id)} className="btn btn-success">More info</button>
+                                        <button
+                                            className="btn btn-neon"
+                                            onClick={() => handleSelect(place.place_id)}
+                                        >
+                                            More Info
+                                        </button>
                                         <button
                                             className="btn btn-link"
                                             onClick={() => toggleFavoritePlace(place)}
                                         >
                                             <img
+                                                className="favorite-icon"
                                                 src={favoritePlaces.some(f => f.placeId === place.place_id)
                                                     ? "https://img.icons8.com/?size=48&id=LaLJUIEg4Miq&format=png"
                                                     : "https://img.icons8.com/?size=48&id=3294&format=png"}
                                                 alt="Favorite Icon"
-                                                style={{ width: "24px", height: "24px" }}
                                             />
                                         </button>
-
                                     </li>
                                 ))}
                             </ul>
-                        ) : <p>No places found.</p>}
+                        )}
                     </div>
                 </div>
-            </div>
 
-            <hr></hr>
-            {/* BOTTOM: Reviews */}
-            <div className="row px-md-5" style={{ height: "30%" }}>
-                <div className="col-12 h-100">
-                    <div className="reviews-container d-flex flex-row flex-nowrap overflow-auto"
-                        style={{
-                            height: "100%",
-                            overflowY: "hidden",
-                            paddingLeft: "1rem",
-                            paddingRight: "1rem",
-                            justifyContent: "space-evenly"   // NEW LINE instead of margin-right on cards
-                        }}
-                    >
-                        {reviews.length === 0 && (
-                            <div className="text-muted fst-italic m-auto">
-                                Please click on <strong>See Reviews</strong> above to see all the reviews.
-                            </div>
-                        )}
 
-                        {reviews.map((r, index) => (
-                            <div key={index}
-                                className="card border-dark mb-3"
-                                style={{
-                                    maxWidth: "18rem",
-                                    flex: "1 1 auto",     // 👈 this allows cards to grow/shrink evenly
-                                    overflow: "hidden"
-                                }}>
-                                <div className="card-header">
-                                    <strong>Rating: {r.rating}<i className="bi bi-star-fill"></i></strong>
+                {/* Reviews */}
+                {selectedPlace && <hr className="section-divider-1" />}
+                <div className="row px-md-5" style={{ maxHeight: "30vh", overflowY: "auto" }}>
+                    <div className="col-12 h-100">
+                        <div className="reviews-container" style={{
+                            display: "flex",
+                            flexWrap: "nowrap",
+                            overflowX: "auto",
+                            gap: "1.5rem",
+                            padding: "1rem 2rem",
+                            justifyContent: "center"
+                        }}>
+                            {selectedPlace && reviews.length === 0 && (
+                                <div className="text-muted fst-italic m-auto">
+                                    Please click on <strong>See Reviews</strong> above to see all the reviews.
                                 </div>
-                                <div className="card-body d-flex flex-column justify-content-between" style={{ height: "100%" }}>
-                                    <div>
-                                        <h5 className="card-title">{r.author_name}:</h5>
+                            )}
+
+                            {reviews.map((r, idx) => (
+                                <div key={idx} className="card googleapi-review-card">
+                                    <div className="card-header">
+                                        <strong>Rating: {r.rating} ⭐</strong>
+                                    </div>
+                                    <div className="card-body d-flex flex-column">
+                                        <h5 className="card-title">{r.author_name}</h5>
                                         <p className="card-text" style={{
                                             display: selectedReview === r ? "block" : "-webkit-box",
-                                            WebkitLineClamp: selectedReview === r ? "unset" : 5,
+                                            WebkitLineClamp: selectedReview === r ? "unset" : 3,
                                             WebkitBoxOrient: "vertical",
                                             overflow: "hidden",
                                             textOverflow: "ellipsis"
                                         }}>
                                             {r.text}
                                         </p>
-                                        {r.text && r.text.length > 150 && (
+                                        {r.text?.length > 150 && (
                                             <a href="#" onClick={e => {
                                                 e.preventDefault();
                                                 setModalReviewText(r.text);
                                                 setShowReviewModal(true);
-                                            }}>
-                                                See full review
-                                            </a>
+                                            }}>See full review</a>
                                         )}
-
-
-                                        <br />
-                                        <small className="text-muted d-block mt-2">
-                                            {r.relative_time_description || "No date available"}
-                                        </small>
+                                        <small className="text-muted mt-2">{r.relative_time_description}</small>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-
-
-
-
-
-                    </div>
-
-                </div>
-            </div>
-            {showReviewModal && (
-                <div className="modal d-block" tabIndex="-1" role="dialog" onClick={() => setShowReviewModal(false)}>
-                    <div className="modal-dialog" role="document" onClick={e => e.stopPropagation()}>
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Full Review</h5>
-                                <button type="button" className="close" onClick={() => setShowReviewModal(false)}>
-                                    <span>&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                <p>{modalReviewText}</p>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>
-            )}
 
-
+                {/* Review Modal */}
+                {
+                    showReviewModal && (
+                        <div className="modal d-block" tabIndex="-1" role="dialog" onClick={() => setShowReviewModal(false)}>
+                            <div className="modal-dialog" role="document" onClick={e => e.stopPropagation()}>
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Full Review</h5>
+                                        <button type="button" className="close" onClick={() => setShowReviewModal(false)}>
+                                            <span>&times;</span>
+                                        </button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <p>{modalReviewText}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+            </div >
         </div>
     );
 };
+
 
 
 

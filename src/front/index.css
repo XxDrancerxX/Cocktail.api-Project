@@ -794,6 +794,58 @@
   box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
 
 }
+.googleapi-background {
+  background: linear-gradient(to right, #ffe0f1, #e0f7ff);
+  padding: 2rem 1rem;
+  min-height: 100vh;
+}
+
+.googleapi-detail-card {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #eee;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+}
+
+.googleapi-place-card {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.1);
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.googleapi-review-card {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+  padding: 1rem;
+  width: 280px;
+  border-radius: 16px;
+}
+
+
+.btn-neon {
+  background: linear-gradient(90deg, #6366f1, #ec4899);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  box-shadow: 0 0 8px #ec4899;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-neon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #ec4899;
+}
+
+.favorite-icon {
+  width: 24px;
+  height: 24px;
+}
+
 
 .glow-black-title {
   font-size: 2.5rem;
@@ -807,4 +859,16 @@
   font-family: "Orbitron", sans-serif;
   margin-left: 25px;
   margin-top: 20px;
+}
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
