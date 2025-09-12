@@ -99,14 +99,16 @@ export const SpotByLocation = () => {
             alert(err.message);
         }
     };
+    console.log("VITE_BACKEND_URL =", import.meta.env.VITE_BACKEND_URL);
+    console.log("POST to:", `${import.meta.env.VITE_BACKEND_URL}/api/places/by-location`);
 
 
 
 
 
     const handleSearch = async () => {
-        setHasSearched(false); // Reinicia búsqueda
-        setSearchError("");     // Limpia errores previos
+        setHasSearched(false);
+        setSearchError("");
 
         if (!location || location.trim() === "") {
             setSearchError("Please enter a location to search for places.");
@@ -126,46 +128,76 @@ export const SpotByLocation = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.error || `HTTP ${res.status}`);
+
+            // Parse ONCE
+            const data = await res.json().catch(() => ({}));
+            console.log("by-location status:", res.status, "payload:", payload, "data:", data);
+
+            // 404 from backend = "No results found" (Geocode had 0 hits)
+            if (res.status === 404) {
+                setError("");                    // not an error, just no hits
+                setPlaces([]);
+                setSearchError("No results found");
+                return;
             }
-            const data = await res.json();
-            setPlaces(data.places || []);
+
+            // Other non-OK HTTP statuses → show backend message (if any)
+            if (!res.ok) {
+                const msg = data?.error || `HTTP ${res.status}`;
+                const details = data?.details ? ` — ${data.details}` : "";
+                setError(`${msg}${details}`);
+                setPlaces([]);
+                return;
+            }
+
+            // OK but backend reports an error structure
+            if (data?.error) {
+                const details = data?.details ? ` — ${data.details}` : "";
+                setError(`${data.error}${details}`);
+                setPlaces([]);
+                return;
+            }
+
+            // Happy path
+            setError("");
+            setPlaces(data?.places || []);
         } catch (err) {
-            setError(err.message);
+            console.error("by-location fetch error:", err);
+            setError(err.message || "Unexpected error");
         } finally {
             setLoading(false);
         }
     };
 
 
-    const handleSelect = async (placeId) => { // Function to handle the selection of a place
-        const payload = { place_id: placeId }; // Create a payload with the selected place ID
+
+    const handleSelect = async (placeId) => {
         const options = {
             method: "POST",
-            headers: { "Content-Type": "application/json" }, // Fixed header key
-            body: JSON.stringify(payload), // Send the selected place ID to the backend
-        }
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ place_id: placeId }),
+        };
+
         try {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/places/details`, options); // Fetch details of the selected place from the backend API
-            console.log("==>> DATA SENT:", res);
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/places/details`, options);
+            const data = await res.json().catch(() => ({}));
+            console.log("details status:", res.status, "data:", data);
+
             if (!res.ok) {
-                console.log("!!!Error fetching place details:", res.statusText);
-                setError("Failed to fetch place details. Please try again later.");
-                return; // Exit the function if the response is not OK so that you don’t try to parse an empty or error body.
+                setError(data?.error || `HTTP ${res.status}`);
+                return;
             }
-            const details = await res.json(); // Parse the response JSON to get the place details
-            setSelectedPlace(details); // Set the selected place details in the state// //update state so React re-renders your detail pane
-            setSelectedReview(null); // Clear any previously selected review
-            setReviews([]); // Clear the reviews state when a new place is selected
-            console.log("▶️  Place details:", details); // Log the place details to the console   
-        }
-        catch (err) {
-            console.log("!!!Error fetching place details:", err);
-            setError(err.message); // Set the error state with the error message
+
+            setSelectedPlace(data);
+            setSelectedReview(null);
+            setReviews([]);
+            setError("");
+        } catch (err) {
+            console.log("details fetch err:", err);
+            setError(err.message);
         }
     };
+
 
     const showsReviews = (reviews) => { // Function to show reviews of the selected place
         if (!reviews || reviews.length === 0) { // Check if reviews are undefined or empty

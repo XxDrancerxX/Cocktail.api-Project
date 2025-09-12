@@ -31,6 +31,8 @@ api = Blueprint('api', __name__)
 
 # ==>> this is the endpoint that will be called from the front end
 # ==>> Search Places by coordinates: Accepts E.G: { latitude: 40.75, longitude: -73.99, cocktail: "Mojito" }
+
+
 @api.route('/places', methods=['POST'])
 def get_places_of_drinks():
 
@@ -96,6 +98,18 @@ def get_places_of_drinks():
             "details": res.text
         }), 500
     body = res.json()
+    status = body.get("status")
+
+    if status != "OK":
+        # Log for server console
+        print("Places API error:", status, body.get("error_message"), body)
+        # Surface to client
+        return jsonify({
+            "error": f"Google Places error: {status}",
+            "details": body.get("error_message"),
+            "raw": body
+        }), 400
+
     print("📄 [Flask] Google JSON:", body)
     places = body.get("results", [])
     next_page_token = body.get("next_page_token")
@@ -162,6 +176,18 @@ def get_places_by_location():
         if places_res.status_code != 200:  # ==>> check if the request was successful
             return jsonify({"error": "Failed to fetch data from Google", "details": places_res.text}), 500
         body = places_res.json()  # ==>> parse the response as json
+        status = body.get("status")
+        
+        if status == "ZERO_RESULTS":
+            return jsonify({"places": [], "next_page_token": None}), 200
+        if status != "OK":
+            print("Places API error:", status, body.get("error_message"), body)
+            return jsonify({
+                "error": f"Google Places error: {status}",
+                "details": body.get("error_message"),
+                "raw": body
+            }), 400
+        
         raw_places = body.get("results", [])
         next_page_token = body.get("next_page_token")
 
@@ -192,6 +218,16 @@ def get_places_by_location():
             # ==>> return a 500 error if the request failed
             return jsonify({"error": "Failed to fetch data from Google Geocoding API"}), 500
         geo_data = geo_res.json()  # ==>> # parse JSON into a dict
+        geo_status = geo_data.get("status")
+
+        if geo_status != "OK":
+            print("Geocoding error:", geo_status, geo_data.get("error_message"), geo_data)
+            return jsonify({
+                "error": f"Geocoding error: {geo_status}",
+                "details": geo_data.get("error_message"),
+                "raw": geo_data
+            }), 400
+
         # ==>> get the results from the response
         results = geo_data.get("results", [])
         if not results:
@@ -228,8 +264,20 @@ def get_places_by_location():
         if places_res.status_code != 200:
             return jsonify({"error": "Failed to fetch data from Google Places API", "details": places_res.text}), 500
         body = places_res.json()
+        status = body.get("status")
+
+        if status == "ZERO_RESULTS":
+            return jsonify({"places": [], "next_page_token": None}), 200
+        if status != "OK":
+            print("Places API error:", status, body.get("error_message"), body)
+            return jsonify({
+                "error": f"Google Places error: {status}",
+                "details": body.get("error_message"),
+                "raw": body
+            }), 400
         raw_places = body.get("results", [])
         next_page_token = body.get("next_page_token")
+
         print(">>> [by-location] STEP 6: received",
               len(raw_places), "raw places")
 

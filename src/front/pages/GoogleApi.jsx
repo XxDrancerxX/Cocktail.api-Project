@@ -19,53 +19,56 @@ export const GoogleApi = () => {
 
 
 
-  const handleSearch = () => { // Function to handle the search button click 
-    setSelectedPlace(null);    // clear out old details
-    setError("");              // clear any past error
-    if (!navigator.geolocation) { // Check if geolocation is supported on browser // Function to handle the search button click--object is provided by the browser's JavaScript engine 
-      setError("Geolocation is not supported by this browser."); // If geolocation is not supported, set an error message
-      return; // Exit the function if geolocation is not supported
-    }
+  const handleSearch = () => {
+  setSelectedPlace(null);
+  setError("");
 
-    navigator.geolocation.getCurrentPosition( // Get the current position of the user  JavaScript feature for web development.
-      async (position) => { // Callback function to handle the position received from geolocation
-        const { latitude, longitude } = position.coords; // Extract latitude and longitude from the position object
-        const payload = { latitude, longitude, cocktail };
-        console.log('PARAM:', cocktail);
-        console.log("▶️  Using coords:", latitude, longitude);
-        console.log("!!!!This is the object of the geolocation!!! :", position);
+  if (!navigator.geolocation) {
+    setError("Geolocation is not supported by this browser.");
+    return;
+  }
 
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const { latitude, longitude } = position.coords;
+    const payload = { latitude, longitude, cocktail };
 
-        try { // Try to fetch places from the backend API using the coordinates and cocktail type
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/places`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }, // Fixed header key
-            body: JSON.stringify(payload),
-          });
-          console.log("▶️ Fetch returned status:", res.status);
-          const data = await res.json();
-          console.log("▶️  Data received:", data);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/places`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-          if (data.error) { // Check if there is an error in the response
-            console.error("!!!Backend error:", data.error);
-            setError(data.error); // Set the error state with the error message from the backend
-            setPlaces([]);
-          } else {
-            setError(""); // Clear any previous error messages
-            console.log("▶️  Places found:", data.places);
-            setPlaces(data.places);
-          }
-        } catch (err) { // Catch any errors that occur during the fetch operation
-          console.error("!!!Error fetching places:", err);
-          setError(err.message);
-        }
-      },
-      (geoErr) => {
-        console.error("!!!Geolocation error:", geoErr);
-        setError("Unable to retrieve your location. Please try again later.");
+      const data = await res.json().catch(() => ({}));
+      console.log("/api/places status:", res.status, "payload:", payload, "data:", data);
+
+      if (!res.ok) {
+        const msg = data?.error || `HTTP ${res.status}`;
+        const details = data?.details ? ` — ${data.details}` : "";
+        setError(`${msg}${details}`);
+        setPlaces([]);
+        return;
       }
-    );
-  };
+
+      if (data?.error) {
+        const details = data?.details ? ` — ${data.details}` : "";
+        setError(`${data.error}${details}`);
+        setPlaces([]);
+        return;
+      }
+
+      setError("");
+      setPlaces(data?.places || []);
+    } catch (err) {
+      console.error("/api/places fetch error:", err);
+      setError(err.message);
+      setPlaces([]);
+    }
+  }, (geoErr) => {
+    console.error("Geolocation error:", geoErr);
+    setError("Unable to retrieve your location. Please try again later.");
+  });
+};
 
   const handleSelect = async (placeId) => { // Function to handle the selection of a place
     const payload = { place_id: placeId }; // Create a payload with the selected place ID

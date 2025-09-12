@@ -74,6 +74,9 @@ dist/*
 !.env.example
 .now
 
+# Ignore environment variable files
+.env
+
 # backend stuff
 .venv
 database.database

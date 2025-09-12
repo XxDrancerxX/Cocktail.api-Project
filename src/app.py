@@ -66,6 +66,10 @@ setup_commands(app)
 
 # Register API routes with prefix
 app.register_blueprint(api, url_prefix='/api')
+print("🔗 Registered routes:")
+for rule in app.url_map.iter_rules():
+    print(f"{sorted(list(rule.methods))}  {rule}")
+
 
 # Handle errors as JSON responses
 @app.errorhandler(APIException)
