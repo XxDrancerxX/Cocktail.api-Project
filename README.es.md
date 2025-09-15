@@ -1,7 +1,3 @@
-### **Nota importante para la base de datos y los datos dentro de ella**
-
-Cada entorno de Github Codespace tendrá **su propia base de datos**, por lo que si estás trabajando con más personas, cada uno tendrá una base de datos diferente y diferentes registros dentro de ella. Estos datos **se perderán**, así que no pases demasiado tiempo creando registros manualmente para pruebas, en su lugar, puedes automatizar la adición de registros a tu base de datos editando el archivo `commands.py` dentro de la carpeta `/src/api`. Edita la línea 32 de la función `insert_test_data` para insertar los datos según tu modelo (usa la función `insert_test_users` anterior como ejemplo). Luego, todo lo que necesitas hacer es ejecutar `pipenv run insert-test-data`.
-
 ## Cómo llenar FRONTEND_URL y VITE_BACKEND_URL
 
 Para configurar correctamente tus variables de entorno, sigue estos pasos:
@@ -33,8 +29,9 @@ FRONTEND_URL=https://curly-happiness-jjrx779pq5wwhpp7q-3000.app.github.dev
 VITE_BACKEND_URL=https://curly-happiness-jjrx779pq5wwhpp7q-3001.app.github.dev
 JWT_SECRET_KEY="tu_secreto"
 ```
+### **Nota importante para la base de datos y los datos dentro de ella**
 
-## Configuración de la clave API de Google Places
+Cada entorno de Github Codespace tendrá **su propia base de datos**, por lo que si estás trabajando con más personas, cada uno tendrá una base de datos diferente y diferentes registros dentro de ella. Estos datos **se perderán**, así que no pases demasiado tiempo creando registros manualmente para pruebas, en su lugar, puedes automatizar la adición de registros a tu base de datos editando el archivo `commands.py` dentro de la carpeta `/src/api`. Edita la línea 32 de la función `insert_test_data` para insertar los datos según tu modelo (usa la función `insert_test_users` anterior como ejemplo). Luego, todo lo que necesitas hacer es ejecutar `pipenv run insert-test-data`.
 
 ## Configuración del archivo .env
 
@@ -51,6 +48,9 @@ Para configurar tus variables de entorno, sigue estos pasos:
 4. Guarda el archivo. Tu aplicación ahora usará estas variables de entorno.
 
 **Nota:** Nunca subas tu archivo `.env` al control de versiones, ya que puede contener información sensible.
+
+
+## Configuración de la clave API de Google Places
 Para usar las funciones de Google Places en este proyecto, necesitas tu propia clave API de Google:
 
 1. Ve a la [Google Cloud Console](https://console.cloud.google.com/).
