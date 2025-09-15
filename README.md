@@ -30,7 +30,10 @@ VITE_BACKEND_URL=https://curly-happiness-jjrx779pq5wwhpp7q-3001.app.github.dev
 JWT_SECRET_KEY="your_secret_key"
 ```
 
-## Google Places API Key Setup
+### **Important note about the database and its data**
+
+Each Github Codespace environment will have **its own database**, so if you are working with more people, each will have a different database and different records inside it. This data **will be lost**, so don't spend too much time creating records manually for testing. Instead, you can automate adding records to your database by editing the `commands.py` file inside the `/src/api` folder. Edit line 32 of the `insert_test_data` function to insert data according to your model (use the `insert_test_users` function above as an example). Then, all you need to do is run `pipenv run insert-test-data`.
+
 
 ## Setting Up Your .env File
 
@@ -47,6 +50,8 @@ To configure your environment variables, follow these steps:
 4. Save the file. Your application will now use these environment variables.
 
 **Note:** Never commit your `.env` file to version control, as it may contain sensitive information.
+
+## Google Places API Key Setup
 To use the Google Places features in this project, you need your own Google API key:
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
@@ -78,7 +83,3 @@ To do this:
 This ensures you (and anyone you share the link with) can access your running application.
 
 ---
-
-### **Important note about the database and its data**
-
-Each Github Codespace environment will have **its own database**, so if you are working with more people, each will have a different database and different records inside it. This data **will be lost**, so don't spend too much time creating records manually for testing. Instead, you can automate adding records to your database by editing the `commands.py` file inside the `/src/api` folder. Edit line 32 of the `insert_test_data` function to insert data according to your model (use the `insert_test_users` function above as an example). Then, all you need to do is run `pipenv run insert-test-data`.
