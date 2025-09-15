@@ -35,6 +35,22 @@ JWT_SECRET_KEY="tu_secreto"
 ```
 
 ## Configuración de la clave API de Google Places
+
+## Configuración del archivo .env
+
+Para configurar tus variables de entorno, sigue estos pasos:
+
+1. Localiza el archivo `.env.example` en la raíz del proyecto. Este archivo contiene ejemplos de variables de entorno y el formato esperado.
+2. Copia el archivo `.env.example` y renómbralo como `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Abre el nuevo archivo `.env` y completa los valores según tu entorno. Cada variable está explicada en los comentarios dentro del archivo.
+4. Guarda el archivo. Tu aplicación ahora usará estas variables de entorno.
+
+**Nota:** Nunca subas tu archivo `.env` al control de versiones, ya que puede contener información sensible.
 Para usar las funciones de Google Places en este proyecto, necesitas tu propia clave API de Google:
 
 1. Ve a la [Google Cloud Console](https://console.cloud.google.com/).
@@ -64,6 +80,3 @@ Para hacerlo:
 3. Haz clic en el ícono de candado y selecciona "Public".
 
 Esto asegura que tú (y cualquier persona con el enlace) puedan acceder a la aplicación en ejecución.
-
-
-

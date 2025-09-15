@@ -31,6 +31,22 @@ JWT_SECRET_KEY="your_secret_key"
 ```
 
 ## Google Places API Key Setup
+
+## Setting Up Your .env File
+
+To configure your environment variables, follow these steps:
+
+1. Locate the `.env.example` file in the root of the project. This file contains example environment variables and their expected format.
+2. Copy the `.env.example` file and rename the copy to `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Open the new `.env` file and fill in the values as needed for your environment. Each variable is explained in the comments within the file.
+4. Save the file. Your application will now use these environment variables.
+
+**Note:** Never commit your `.env` file to version control, as it may contain sensitive information.
 To use the Google Places features in this project, you need your own Google API key:
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
